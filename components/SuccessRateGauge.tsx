@@ -240,7 +240,7 @@ export default function SuccessRateGauge({ clientId }: SuccessRateGaugeProps) {
   const labelOffset = 40 // Same offset as segment labels (radius + 40)
   // Single constant for label radius to ensure all labels are at exactly the same distance
   const labelRadius = radius + labelOffset
-  const labelPositions: Array<{ percent: number; x: number; y: number; textAnchor?: string }> = []
+  const labelPositions: Array<{ percent: number; x: number; y: number; textAnchor?: "inherit" | "end" | "start" | "middle" }> = []
   
   // Calculate 0% position using angle-based positioning (consistent with segment labels)
   // Use same distance as segment labels, with "start" anchor to prevent clipping
