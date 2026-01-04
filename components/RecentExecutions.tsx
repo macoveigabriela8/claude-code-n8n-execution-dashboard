@@ -32,13 +32,14 @@ export default function RecentExecutions({ clientId }: RecentExecutionsProps) {
   const [error, setError] = useState<string | null>(null)
   const [statusFilter, setStatusFilter] = useState<string>('all')
   const [workflowFilter, setWorkflowFilter] = useState<string>('all')
+  const [daysFilter, setDaysFilter] = useState<number>(1)
   const [currentPage, setCurrentPage] = useState(1)
 
   useEffect(() => {
     async function fetchData() {
       try {
         setLoading(true)
-        const filters: { status?: string; limit?: number } = { limit: 100 }
+        const filters: { status?: string; limit?: number; days?: number } = { limit: 100, days: daysFilter }
         if (statusFilter !== 'all') {
           filters.status = statusFilter
         }
@@ -62,7 +63,7 @@ export default function RecentExecutions({ clientId }: RecentExecutionsProps) {
     }
 
     fetchData()
-  }, [clientId, statusFilter])
+  }, [clientId, statusFilter, daysFilter])
 
   // Get unique workflow names from the data
   const workflowOptions = Array.from(
@@ -123,6 +124,8 @@ export default function RecentExecutions({ clientId }: RecentExecutionsProps) {
               workflowFilter={workflowFilter}
               onWorkflowChange={setWorkflowFilter}
               workflowOptions={workflowOptions}
+              daysFilter={daysFilter}
+              onDaysChange={setDaysFilter}
             />
           </div>
         </CardHeader>

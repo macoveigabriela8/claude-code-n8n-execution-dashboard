@@ -243,7 +243,7 @@ export default function ToolCostManager({ clientId }: ToolCostManagerProps) {
       // Filter to only enabled tools and remove internal fields
       const toolsToSave: any[] = tools
         .filter(tool => tool.enabled)
-        .map(({ enabled, isDefault, id, ...tool }) => {
+        .map(({ enabled, isDefault, ...tool }) => {
           const hasEndDate = !!(tool as any).end_date
           const baseTool: any = {
             ...tool,

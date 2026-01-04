@@ -6,7 +6,7 @@ import { Skeleton } from '@/components/ui/skeleton'
 import { getWorkflowStats } from '@/lib/supabase'
 import { WorkflowStats as WorkflowStatsType } from '@/types/supabase'
 import { formatTimeAgo, formatDuration, getHealthStatus } from '@/lib/utils'
-import { ChevronDown, AlertCircle, CheckCircle2 } from 'lucide-react'
+import { ChevronDown, AlertCircle, CheckCircle2, Activity } from 'lucide-react'
 import {
   Tooltip,
   TooltipContent,
