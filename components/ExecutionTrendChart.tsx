@@ -174,21 +174,24 @@ export default function ExecutionTrendChart({ clientId }: ExecutionTrendChartPro
   return (
     <Card 
       style={{ 
-        marginTop: '10px',
-        border: isCardHovered ? `1px solid ${Colors.dashboard.text.primary.rgb}` : undefined
+        marginTop: '0px',
+        border: isCardHovered ? `1px solid ${Colors.dashboard.text.primary.rgb}` : undefined,
+        height: '100%',
+        display: 'flex',
+        flexDirection: 'column'
       }}
       onMouseEnter={() => setIsCardHovered(true)}
       onMouseLeave={() => setIsCardHovered(false)}
     >
-      <CardHeader style={{ padding: '10px 10px 5px', position: 'relative' }}>
+      <CardHeader style={{ padding: '16px 16px 4px', position: 'relative' }}>
         <h4 style={{ 
           color: Colors.dashboard.text.primary.rgb,
-          maxWidth: '579px',
-          fontSize: 'calc(1.275rem + 0.3vw)', 
+          maxWidth: '463px',
+          fontSize: 'calc(1.02rem + 0.24vw)', 
           fontWeight: 500, 
           margin: 0, 
           padding: 0, 
-          paddingRight: '180px',
+          paddingRight: '144px',
           fontFamily: 'Roboto',
           wordWrap: 'break-word',
           WebkitLineClamp: 2,
@@ -202,9 +205,9 @@ export default function ExecutionTrendChart({ clientId }: ExecutionTrendChartPro
         }}>Execution Trend</h4>
         <span style={{
           position: 'absolute',
-          top: '14px',
-          right: '10px',
-          fontSize: '0.875rem',
+          top: '11px',
+          right: '8px',
+          fontSize: '0.7rem',
           color: Colors.main.default.gray2.rgb,
           fontFamily: 'Roboto',
           margin: 0,
@@ -215,7 +218,7 @@ export default function ExecutionTrendChart({ clientId }: ExecutionTrendChartPro
           Last 24 H
         </span>
       </CardHeader>
-      <CardContent style={{ padding: '20px' }}>
+      <CardContent style={{ padding: '16px', flex: 1, display: 'flex', flexDirection: 'column' }}>
         {hourlyData.length === 0 ? (
           <div className="flex flex-col items-center justify-center py-12">
             <div className="rounded-full bg-muted p-3 mb-4">
@@ -229,55 +232,55 @@ export default function ExecutionTrendChart({ clientId }: ExecutionTrendChartPro
         ) : (
           <>
             {/* Custom Legend */}
-            <div style={{ display: 'flex', flexWrap: 'wrap', gap: '16px', marginBottom: '20px', alignItems: 'center', justifyContent: 'center' }}>
-              <div style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
+            <div style={{ display: 'flex', flexWrap: 'wrap', gap: '13px', marginBottom: '16px', alignItems: 'center', justifyContent: 'center' }}>
+              <div style={{ display: 'flex', alignItems: 'center', gap: '5px' }}>
                 <div
                   style={{
-                    width: '12px',
-                    height: '12px',
+                    width: '10px',
+                    height: '10px',
                     borderRadius: '50%',
                     backgroundColor: Colors.main.primary.color1.hex,
                     flexShrink: 0,
                   }}
                 />
-                <span style={{ fontSize: '13px', color: Colors.dashboard.text.primary.rgb }}>
+                <span style={{ fontSize: '10px', color: Colors.dashboard.text.primary.rgb }}>
                   Successful Executions
                 </span>
               </div>
-              <div style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
+              <div style={{ display: 'flex', alignItems: 'center', gap: '5px' }}>
                 <div
                   style={{
-                    width: '12px',
-                    height: '12px',
+                    width: '10px',
+                    height: '10px',
                     borderRadius: '50%',
                     backgroundColor: 'rgb(153, 147, 255)',
                     flexShrink: 0,
                   }}
                 />
-                <span style={{ fontSize: '13px', color: Colors.dashboard.text.primary.rgb }}>
+                <span style={{ fontSize: '10px', color: Colors.dashboard.text.primary.rgb }}>
                   Failed Executions
                 </span>
               </div>
             </div>
-            <ResponsiveContainer width="100%" height={400}>
+            <ResponsiveContainer width="100%" height={320}>
               <LineChart data={hourlyData}>
                 <XAxis
                   dataKey="hour"
                   stroke={Colors.main.default.gray2.hex}
-                  style={{ fontSize: '12px' }}
+                  style={{ fontSize: '10px' }}
                   interval="preserveStartEnd"
                 />
                 <YAxis
                   yAxisId="left"
                   stroke={Colors.main.default.gray2.hex}
-                  style={{ fontSize: '12px' }}
+                  style={{ fontSize: '10px' }}
                   label={{ value: 'Successful Executions', angle: -90, position: 'insideLeft', style: { textAnchor: 'middle', fill: Colors.main.default.gray2.hex } }}
                 />
                 <YAxis
                   yAxisId="right"
                   orientation="right"
                   stroke={Colors.main.default.gray2.hex}
-                  style={{ fontSize: '12px' }}
+                  style={{ fontSize: '10px' }}
                   label={{ value: 'Failed Executions', angle: 90, position: 'insideRight', style: { textAnchor: 'middle', fill: Colors.main.default.gray2.hex } }}
                 />
                 <Tooltip
@@ -293,31 +296,31 @@ export default function ExecutionTrendChart({ clientId }: ExecutionTrendChartPro
                         backgroundColor: '#333333',
                         border: 'none',
                         borderRadius: '4px',
-                        padding: '10px 14px',
+                        padding: '8px 11px',
                         color: '#FFFFFF',
-                        fontSize: '14px',
+                        fontSize: '11px',
                         fontWeight: 400,
                         fontFamily: 'Roboto, sans-serif',
                         boxShadow: '0 2px 8px rgba(0, 0, 0, 0.3)',
                         lineHeight: '1.5'
                       }}>
-                        <div style={{ marginBottom: '8px', fontWeight: 500, fontSize: '14px' }}>
+                        <div style={{ marginBottom: '6px', fontWeight: 500, fontSize: '11px' }}>
                           {label}
                         </div>
-                        <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '6px' }}>
+                        <div style={{ display: 'flex', alignItems: 'center', gap: '6px', marginBottom: '5px' }}>
                           <div style={{
-                            width: '12px',
-                            height: '12px',
+                            width: '10px',
+                            height: '10px',
                             backgroundColor: Colors.main.primary.color1.hex,
                             flexShrink: 0,
                             borderRadius: '2px'
                           }} />
                           <span style={{ fontWeight: 400 }}>Successful Executions : {successfulValue}</span>
                         </div>
-                        <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+                        <div style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
                           <div style={{
-                            width: '12px',
-                            height: '12px',
+                            width: '10px',
+                            height: '10px',
                             backgroundColor: 'rgb(153, 147, 255)',
                             flexShrink: 0,
                             borderRadius: '2px'

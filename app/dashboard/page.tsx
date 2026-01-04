@@ -32,13 +32,13 @@ function DashboardContent() {
 
   return (
     <div className="min-h-screen bg-white">
-      <div className="mx-auto" style={{ maxWidth: '1600px', width: '100%', padding: '0 20px' }}>
+      <div className="mx-auto" style={{ maxWidth: '1600px', width: '100%', padding: '0 16px' }}>
         {/* Header */}
         <div className="sticky top-0 z-10" style={{ backgroundColor: Colors.dashboard.header.background.rgb, color: Colors.dashboard.header.text.rgb }}>
-          <div style={{ height: '36.9048px', display: 'flex', alignItems: 'center', paddingLeft: '20px', paddingRight: '20px' }}>
-            <div className="flex items-center justify-between w-full" style={{ gap: '20px' }}>
+          <div style={{ height: '30px', display: 'flex', alignItems: 'center', paddingLeft: '16px', paddingRight: '16px' }}>
+            <div className="flex items-center justify-between w-full" style={{ gap: '16px' }}>
               <div style={{ minWidth: 0, flexShrink: 1 }}>
-                <h1 className="text-base font-medium" style={{ fontSize: '23px', lineHeight: '31px', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>AI Automation ROI</h1>
+                <h1 className="text-base font-medium" style={{ fontSize: '18px', lineHeight: '25px', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>AI Automation ROI</h1>
               </div>
               <div className="flex items-center gap-2" style={{ minWidth: 0, flexShrink: 0 }}>
                 <Suspense fallback={<div className="h-5 w-32 bg-white/20 animate-pulse rounded" />}>
@@ -70,12 +70,16 @@ function DashboardContent() {
             </section>
 
             {/* Success Rate Gauge and Execution Trend - Side by Side */}
-            <section style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '10px', marginTop: '10px' }}>
-              <Suspense fallback={<div>Loading success rate...</div>}>
-                <SuccessRateGauge clientId={clientId} />
+            <section style={{ display: 'grid', gridTemplateColumns: 'minmax(0, 1fr) minmax(0, 1fr)', gap: '8px', marginTop: '8px', alignItems: 'stretch' }}>
+              <Suspense fallback={<div style={{ minWidth: 0 }}>Loading success rate...</div>}>
+                <div style={{ minWidth: 0 }}>
+                  <SuccessRateGauge clientId={clientId} />
+                </div>
               </Suspense>
-              <Suspense fallback={<div>Loading execution trend...</div>}>
-                <ExecutionTrendChart clientId={clientId} />
+              <Suspense fallback={<div style={{ minWidth: 0 }}>Loading execution trend...</div>}>
+                <div style={{ minWidth: 0 }}>
+                  <ExecutionTrendChart clientId={clientId} />
+                </div>
               </Suspense>
             </section>
 

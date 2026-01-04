@@ -97,9 +97,9 @@ export default function KPICards({ clientId }: KPICardsProps) {
 
   if (loading) {
     return (
-      <div className="grid gap-0" style={{ gridTemplateColumns: 'repeat(3, 1fr)', marginTop: '10px' }}>
+      <div className="grid gap-0" style={{ gridTemplateColumns: 'repeat(3, 1fr)', marginTop: '8px' }}>
         {[1, 2, 3, 4, 5, 6].map((i) => (
-          <div key={i} style={{ border: `1px solid ${Colors.dashboard.borders.lighter.rgb}`, backgroundColor: Colors.dashboard.background.white.rgb, padding: '20px' }}>
+          <div key={i} style={{ border: `1px solid ${Colors.dashboard.borders.lighter.rgb}`, backgroundColor: Colors.dashboard.background.white.rgb, padding: '16px' }}>
             <Skeleton className="h-4 w-24 mb-3" />
             <Skeleton className="h-8 w-32 mb-2" />
             <Skeleton className="h-3 w-40" />
@@ -111,7 +111,7 @@ export default function KPICards({ clientId }: KPICardsProps) {
 
   if (error) {
     return (
-      <div style={{ border: `1px solid ${Colors.dashboard.borders.lighter.rgb}`, backgroundColor: Colors.dashboard.background.white.rgb, padding: '20px' }}>
+      <div style={{ border: `1px solid ${Colors.dashboard.borders.lighter.rgb}`, backgroundColor: Colors.dashboard.background.white.rgb, padding: '16px' }}>
         <p style={{ color: Colors.main.default.red.hex }}>{error}</p>
       </div>
     )
@@ -176,20 +176,20 @@ export default function KPICards({ clientId }: KPICardsProps) {
 
   const titleStyle = {
     color: '#0D076A',
-    fontSize: '17px',
+    fontSize: '14px',
     fontFamily: 'Roboto, sans-serif',
     fontWeight: 700,
-    margin: '0px 10.5px 12px',
+    margin: '0px 8px 10px',
     padding: '0px 2px',
     letterSpacing: '0.3px',
   }
 
   const valueStyle = {
     color: '#212529',
-    fontSize: '40px',
+    fontSize: '32px',
     fontFamily: 'Roboto, sans-serif',
     fontWeight: 900,
-    margin: '0px 0px 12px',
+    margin: '0px 0px 10px',
     padding: 0,
     lineHeight: '1.2',
     letterSpacing: '0.5px',
@@ -197,7 +197,7 @@ export default function KPICards({ clientId }: KPICardsProps) {
 
   const subtitleStyle = {
     color: '#9CA0A9',
-    fontSize: '15px',
+    fontSize: '12px',
     fontFamily: 'Roboto, sans-serif',
     fontWeight: 500,
     margin: '0px 0px 0px',
@@ -217,7 +217,7 @@ export default function KPICards({ clientId }: KPICardsProps) {
   })
 
   const innerContentStyle = {
-    padding: '32px 28px',
+    padding: '26px 22px',
   }
 
   const KPICard = ({ title, value, subtitle, lineColor, isHero, valueColor }: { title: string; value: string; subtitle: string; lineColor: string; isHero?: boolean; valueColor?: string }) => {
@@ -241,15 +241,15 @@ export default function KPICards({ clientId }: KPICardsProps) {
     const customValueStyle = valueColor ? {
       ...valueStyle,
       color: valueColor,
-      fontSize: '44px', // 10% larger font for hero card (40px -> 44px)
+      fontSize: '35px', // Scaled: 44px * 0.8 = 35.2px -> 35px
       textShadow: '0 2px 4px rgba(0, 0, 0, 0.08)', // Subtle shadow for depth
-      margin: '0px 0px 4px', // Reduced margin to align subtitle better (12px -> 4px)
+      margin: '0px 0px 3px', // Scaled: 4px * 0.8 = 3.2px -> 3px
     } : valueStyle
     
     const customTitleStyle = isHero ? {
       ...titleStyle,
-      fontSize: '20px', // 15% larger (17px -> 20px, rounded)
-      margin: '0px 10.5px 8px', // Reduced bottom margin to bring value closer (12px -> 8px)
+      fontSize: '16px', // Scaled: 20px * 0.8 = 16px
+      margin: '0px 8px 6px', // Scaled: 10.5px * 0.8 = 8.4px -> 8px, 8px * 0.8 = 6.4px -> 6px
     } : titleStyle
     
     return (
@@ -276,8 +276,8 @@ export default function KPICards({ clientId }: KPICardsProps) {
   }
 
   return (
-    <div style={{ marginTop: '10px' }}>
-      <div className="grid" style={{ gridTemplateColumns: 'repeat(3, 1fr)', gap: '10px' }}>
+    <div style={{ marginTop: '8px' }}>
+      <div className="grid" style={{ gridTemplateColumns: 'repeat(3, 1fr)', gap: '8px' }}>
         {/* ROI */}
         <KPICard
           title="ROI"

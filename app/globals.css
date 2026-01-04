@@ -28,6 +28,8 @@
     --mokkup-primary: 222 47% 22%; /* rgb(13, 7, 106) */
     --mokkup-green: 74 54% 48%; /* rgb(147, 191, 53) */
     --mokkup-red: 0 62% 66%; /* rgb(221, 112, 112) */
+    /* UI Scale: 0.8 to match 80% browser zoom appearance at 100% zoom */
+    --ui-scale: 0.8;
   }
 
   .dark {
@@ -59,7 +61,25 @@
   }
   body {
     @apply bg-background text-foreground;
-    font-family: Roboto, sans-serif;
+  }
+}
+
+/* Safari-specific font rendering improvements */
+/* Targets Safari/WebKit browsers only */
+@supports (-webkit-appearance: none) and (not (appearance: none)) {
+  body,
+  * {
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    text-rendering: optimizeLegibility;
+  }
+}
+
+/* Additional Safari fix: prevent text size adjustment */
+@supports (-webkit-appearance: none) {
+  html {
+    -webkit-text-size-adjust: 100%;
+    text-size-adjust: 100%;
   }
 }
 

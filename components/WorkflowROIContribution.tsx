@@ -237,7 +237,7 @@ export default function WorkflowROIContribution({ clientId }: WorkflowROIContrib
           height={height}
           fill={color}
         />
-        {width > 60 && height > 30 && (
+        {width > 48 && height > 24 && (
           <>
             {fitsOnOneLine ? (
               <text
@@ -245,7 +245,7 @@ export default function WorkflowROIContribution({ clientId }: WorkflowROIContrib
                 y={y + height / 2 + 5}
                 textAnchor="middle"
                 fill="#fff"
-                fontSize={16}
+                fontSize={13}
                 fontWeight="bold"
                 className="pointer-events-none"
               >
@@ -258,7 +258,7 @@ export default function WorkflowROIContribution({ clientId }: WorkflowROIContrib
                   y={y + height / 2 - 10}
                   textAnchor="middle"
                   fill="#fff"
-                  fontSize={16}
+                  fontSize={13}
                   fontWeight="bold"
                   className="pointer-events-none"
                 >
@@ -269,7 +269,7 @@ export default function WorkflowROIContribution({ clientId }: WorkflowROIContrib
                   y={y + height / 2 + 12}
                   textAnchor="middle"
                   fill="#fff"
-                  fontSize={14}
+                  fontSize={11}
                   fontWeight="bold"
                   className="pointer-events-none"
                 >
@@ -286,18 +286,18 @@ export default function WorkflowROIContribution({ clientId }: WorkflowROIContrib
   return (
     <Card 
       style={{ 
-        marginTop: '10px',
+        marginTop: '8px',
         border: isCardHovered ? `1px solid ${Colors.dashboard.text.primary.rgb}` : `1px solid ${Colors.dashboard.borders.light.rgb}`
       }}
       onMouseEnter={() => setIsCardHovered(true)}
       onMouseLeave={() => setIsCardHovered(false)}
     >
-        <CardHeader style={{ padding: '20px 20px 5px' }}>
+        <CardHeader style={{ padding: '16px 16px 4px' }}>
           <div className="flex items-center justify-between">
             <h4 style={{ 
               color: Colors.dashboard.text.primary.rgb,
               maxWidth: '579px',
-              fontSize: 'calc(1.275rem + 0.3vw)', 
+              fontSize: 'calc(1.02rem + 0.24vw)', 
               fontWeight: 500, 
               margin: 0, 
               padding: 0, 
@@ -319,8 +319,8 @@ export default function WorkflowROIContribution({ clientId }: WorkflowROIContrib
                 border: `1px solid ${viewMode === 'revenue' ? Colors.dashboard.text.primary.rgb : Colors.dashboard.borders.lighter.rgb}`,
                 backgroundColor: viewMode === 'revenue' ? Colors.dashboard.text.primary.rgb : Colors.dashboard.background.white.rgb,
                 color: viewMode === 'revenue' ? Colors.dashboard.header.text.rgb : Colors.dashboard.text.primary.rgb,
-                padding: '6px 12px',
-                fontSize: '12px',
+                padding: '5px 10px',
+                fontSize: '10px',
                 cursor: 'pointer',
                 borderRadius: '4px',
               }}
@@ -333,8 +333,8 @@ export default function WorkflowROIContribution({ clientId }: WorkflowROIContrib
                 border: `1px solid ${viewMode === 'hours' ? 'rgb(13, 7, 106)' : 'rgb(232, 232, 232)'}`,
                 backgroundColor: viewMode === 'hours' ? 'rgb(13, 7, 106)' : 'white',
                 color: viewMode === 'hours' ? 'white' : 'rgb(13, 7, 106)',
-                padding: '6px 12px',
-                fontSize: '12px',
+                padding: '5px 10px',
+                fontSize: '10px',
                 cursor: 'pointer',
                 borderRadius: '4px',
               }}
@@ -344,7 +344,7 @@ export default function WorkflowROIContribution({ clientId }: WorkflowROIContrib
           </div>
         </div>
       </CardHeader>
-      <CardContent style={{ padding: '20px' }}>
+      <CardContent style={{ padding: '16px' }}>
         {treemapData.length === 0 ? (
           <div className="flex flex-col items-center justify-center py-12">
             <p className="text-sm text-muted-foreground">
@@ -354,8 +354,8 @@ export default function WorkflowROIContribution({ clientId }: WorkflowROIContrib
         ) : (
           <>
             {/* Treemap Chart */}
-            <div ref={setContainerRef} style={{ width: '100%', height: '400px', position: 'relative' }}>
-              <ResponsiveContainer width="100%" height={400}>
+            <div ref={setContainerRef} style={{ width: '100%', height: '320px', position: 'relative' }}>
+              <ResponsiveContainer width="100%" height={320}>
                 <Treemap
                   data={treemapData}
                   dataKey="value"
@@ -424,32 +424,32 @@ export default function WorkflowROIContribution({ clientId }: WorkflowROIContrib
                       color: Colors.dashboard.text.primary.rgb,
                       padding: '12px',
                       borderRadius: '0px',
-                      fontSize: '15px',
+                      fontSize: '12px',
                       pointerEvents: 'none',
                       zIndex: 1000,
                       boxShadow: '0 4px 12px rgba(0, 0, 0, 0.2)',
                       display: 'flex',
                       alignItems: 'center',
-                      gap: '8px',
-                      maxWidth: '500px',
+                      gap: '6px',
+                      maxWidth: '400px',
                     }}
                   >
                     <div
                       style={{
-                        width: '12px',
-                        height: '12px',
+                        width: '10px',
+                        height: '10px',
                         backgroundColor: hoveredCell.color,
                         flexShrink: 0,
                       }}
                     />
                     <span style={{ 
-                      fontSize: '15px', 
+                      fontSize: '12px', 
                       color: Colors.dashboard.text.primary.rgb,
                     }}>
                       {hoveredCell.name}:
                     </span>
                     <span style={{ 
-                      fontSize: '15px', 
+                      fontSize: '12px', 
                       fontWeight: 700, 
                       color: Colors.dashboard.text.primary.rgb,
                       flexShrink: 0,
@@ -461,7 +461,7 @@ export default function WorkflowROIContribution({ clientId }: WorkflowROIContrib
               })()}
             </div>
             {/* Legend */}
-            <div style={{ display: 'flex', flexWrap: 'wrap', gap: '12px', marginTop: '20px', width: '100%', maxWidth: '100%', alignItems: 'center', justifyContent: 'flex-start' }}>
+            <div style={{ display: 'flex', flexWrap: 'wrap', gap: '10px', marginTop: '16px', width: '100%', maxWidth: '100%', alignItems: 'center', justifyContent: 'flex-start' }}>
               {treemapData.map((entry, index) => (
                 <div key={entry.workflow_id || index} style={{ display: 'flex', alignItems: 'center', gap: '6px', flexShrink: 0 }}>
                   <div
@@ -473,7 +473,7 @@ export default function WorkflowROIContribution({ clientId }: WorkflowROIContrib
                       flexShrink: 0,
                     }}
                   />
-                  <span style={{ fontSize: '14px', color: Colors.dashboard.text.primary.rgb, fontWeight: 400, whiteSpace: 'nowrap', lineHeight: 1.4 }}>
+                  <span style={{ fontSize: '11px', color: Colors.dashboard.text.primary.rgb, fontWeight: 400, whiteSpace: 'nowrap', lineHeight: 1.4 }}>
                     {entry.name}
                   </span>
                 </div>

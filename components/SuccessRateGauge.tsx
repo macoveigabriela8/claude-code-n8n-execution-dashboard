@@ -113,14 +113,14 @@ export default function SuccessRateGauge({ clientId }: SuccessRateGaugeProps) {
     }
   }
 
-  // Gauge dimensions - make arc 2.5x bigger, reduce white space
-  const width = 700
-  const height = 400
+  // Gauge dimensions - scaled to 80% (0.8)
+  const width = 560
+  const height = 320
   const centerX = width / 2
-  const centerY = height - 10 // Position closer to bottom to reduce white space
-  const radius = 300 // 2.5x larger radius (300 is approximately 2.5x of original ~120 base)
-  // Reduce arc thickness by 5%: current thickness = 170px, new = 170 * 0.95 = 161.5px
-  const innerRadius = radius - 161.5 // innerRadius = 138.5 (thickness = 161.5px, 5% reduction)
+  const centerY = height - 8 // Scaled: 10 * 0.8 = 8
+  const radius = 240 // Scaled: 300 * 0.8 = 240
+  // Arc thickness scaled: 161.5 * 0.8 = 129.2px
+  const innerRadius = radius - 129.2 // innerRadius = 110.8 (thickness = 129.2px)
   const startAngle = 180 // Start at left (180°) for 0%
   const endAngle = 0 // End at right (0°) for 100%
 
@@ -257,8 +257,11 @@ export default function SuccessRateGauge({ clientId }: SuccessRateGaugeProps) {
   return (
     <Card 
       style={{ 
-        marginTop: '10px',
-        border: isCardHovered ? `1px solid ${Colors.dashboard.text.primary.rgb}` : undefined
+        marginTop: '0px',
+        border: isCardHovered ? `1px solid ${Colors.dashboard.text.primary.rgb}` : undefined,
+        height: '100%',
+        display: 'flex',
+        flexDirection: 'column'
       }}
       onMouseEnter={() => setIsCardHovered(true)}
       onMouseLeave={() => setIsCardHovered(false)}
@@ -266,12 +269,12 @@ export default function SuccessRateGauge({ clientId }: SuccessRateGaugeProps) {
       <CardHeader style={{ padding: '20px 20px 5px', position: 'relative' }}>
         <h4 style={{ 
           color: Colors.dashboard.text.primary.rgb,
-          maxWidth: '579px',
-          fontSize: 'calc(1.275rem + 0.3vw)', 
+          maxWidth: '463px',
+          fontSize: 'calc(1.02rem + 0.24vw)', 
           fontWeight: 500, 
           margin: 0, 
           padding: 0, 
-          paddingRight: '180px',
+          paddingRight: '144px',
           fontFamily: 'Roboto',
           wordWrap: 'break-word',
           WebkitLineClamp: 2,
@@ -285,9 +288,9 @@ export default function SuccessRateGauge({ clientId }: SuccessRateGaugeProps) {
         }}>Execution Success Rate</h4>
         <span style={{
           position: 'absolute',
-          top: '14px',
-          right: '10px',
-          fontSize: '0.875rem',
+          top: '11px',
+          right: '8px',
+          fontSize: '0.7rem',
           color: Colors.main.default.gray2.rgb,
           fontFamily: 'Roboto',
           margin: 0,
@@ -298,9 +301,9 @@ export default function SuccessRateGauge({ clientId }: SuccessRateGaugeProps) {
           Last 24 H
         </span>
       </CardHeader>
-      <CardContent style={{ padding: '5px' }}>
-        <div className="flex flex-col items-center justify-center" ref={setContainerRef} style={{ position: 'relative' }}>
-          <svg width={width} height={height} style={{ overflow: 'visible' }}>
+      <CardContent style={{ padding: '16px', flex: 1, display: 'flex', flexDirection: 'column' }}>
+        <div className="flex flex-col items-center justify-center" ref={setContainerRef} style={{ position: 'relative', width: '100%', maxWidth: '100%', overflow: 'visible', flex: 1, minHeight: 0 }}>
+          <svg width="100%" height="320" viewBox={`0 0 ${width} ${height}`} preserveAspectRatio="xMidYMid meet" style={{ maxWidth: '100%' }}>
             {/* Background segments - proportional based on execution counts */}
             {totalExecutions > 0 && segmentBoundaries.slice(0, -1).map((startPercent, index) => {
               const endPercent = segmentBoundaries[index + 1]
@@ -354,7 +357,7 @@ export default function SuccessRateGauge({ clientId }: SuccessRateGaugeProps) {
                 y={label.y}
                 textAnchor="middle"
                 style={{
-                  fontSize: '14px',
+                  fontSize: '11px',
                   fill: Colors.dashboard.text.primary.rgb,
                   fontFamily: 'Roboto, sans-serif',
                 }}
@@ -370,7 +373,7 @@ export default function SuccessRateGauge({ clientId }: SuccessRateGaugeProps) {
               const midAngle = percentageToAngle(midPercent)
               const midAngleRad = degToRad(midAngle)
               // Position label further out than the radius (radius + 50px offset)
-              const labelRadius = radius + 50
+              const labelRadius = radius + 40
               const labelX = centerX + labelRadius * Math.cos(midAngleRad)
               const labelY = centerY - labelRadius * Math.sin(midAngleRad) // Negative to curve upward
               const workflow = workflowsWithExecutions[index]
@@ -389,7 +392,7 @@ export default function SuccessRateGauge({ clientId }: SuccessRateGaugeProps) {
                   textAnchor="middle"
                   dominantBaseline="middle"
                   style={{
-                    fontSize: '14px',
+                    fontSize: '11px',
                     fill: Colors.dashboard.text.primary.rgb,
                     fontFamily: 'Roboto, sans-serif',
                     fontWeight: 500,
@@ -420,44 +423,44 @@ export default function SuccessRateGauge({ clientId }: SuccessRateGaugeProps) {
                 color: Colors.dashboard.background.white.rgb,
                 padding: '8px 12px',
                 borderRadius: '0px',
-                fontSize: '14px',
+                fontSize: '11px',
                 pointerEvents: 'none',
                 zIndex: 1000,
                 whiteSpace: 'nowrap',
                 boxShadow: '0 4px 12px rgba(0, 0, 0, 0.2)',
                 display: 'flex',
                 alignItems: 'center',
-                gap: '8px',
+                gap: '6px',
               }}
             >
               <div
                 style={{
-                  width: '12px',
-                  height: '12px',
+                  width: '10px',
+                  height: '10px',
                   backgroundColor: hoveredSegment.color,
                   flexShrink: 0,
                 }}
               />
-              <span style={{ fontSize: '14px', color: Colors.dashboard.background.white.rgb }}>
+              <span style={{ fontSize: '11px', color: Colors.dashboard.background.white.rgb }}>
                 {hoveredSegment.name}: <span style={{ fontWeight: 700 }}>{hoveredSegment.percent.toFixed(1)}%</span>
               </span>
             </div>
           )}
 
           {/* Success rate and target - positioned below the gauge */}
-          <div style={{ marginTop: '10px', textAlign: 'center' }}>
+          <div style={{ marginTop: '8px', textAlign: 'center' }}>
             <div style={{ 
-              fontSize: '24px', // Half the size (was 48px)
+              fontSize: '19px', // Scaled: 24px * 0.8 = 19.2px -> 19px
               fontWeight: 700, 
               color: Colors.main.default.black.rgb, // Changed to black (was gray1)
               fontFamily: 'Roboto, sans-serif',
               lineHeight: '1.2',
-              marginBottom: '8px'
+              marginBottom: '6px'
             }}>
               {successRate.toFixed(0)}%
             </div>
             <p style={{ 
-              fontSize: '14px', 
+              fontSize: '11px', 
               color: Colors.main.default.gray2.rgb,
               fontFamily: 'Roboto, sans-serif',
               margin: 0

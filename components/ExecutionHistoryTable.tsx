@@ -176,18 +176,18 @@ export default function ExecutionHistoryTable({ clientId }: ExecutionHistoryTabl
   return (
     <Card 
         style={{ 
-          marginTop: '10px',
+          marginTop: '8px',
           border: isCardHovered ? `1px solid ${Colors.dashboard.text.primary.rgb}` : undefined
         }}
         onMouseEnter={() => setIsCardHovered(true)}
         onMouseLeave={() => setIsCardHovered(false)}
       >
-        <CardHeader style={{ padding: '20px 20px 5px', borderBottom: `1px solid ${Colors.dashboard.borders.lighter.rgb}`, position: 'relative' }}>
+        <CardHeader style={{ padding: '16px 16px 4px', borderBottom: `1px solid ${Colors.dashboard.borders.lighter.rgb}`, position: 'relative' }}>
           <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4 mb-2">
             <div>
               <h4 style={{ 
                 color: Colors.dashboard.text.primary.rgb,
-                fontSize: 'calc(1.275rem + 0.3vw)', 
+                fontSize: 'calc(1.02rem + 0.24vw)', 
                 fontWeight: 500, 
                 margin: 0, 
                 padding: 0, 
@@ -232,7 +232,7 @@ export default function ExecutionHistoryTable({ clientId }: ExecutionHistoryTabl
             />
           </div>
         </CardHeader>
-        <CardContent style={{ padding: '20px' }}>
+        <CardContent style={{ padding: '16px' }}>
           {loading ? (
             <div className="space-y-3">
               {[1, 2, 3, 4, 5].map((i) => (
@@ -264,11 +264,11 @@ export default function ExecutionHistoryTable({ clientId }: ExecutionHistoryTabl
                 <table className="w-full" style={{ borderCollapse: 'collapse' }}>
                   <thead style={{ position: 'sticky', top: 0, zIndex: 10 }}>
                     <tr style={{ backgroundColor: '#F5F5F5' }}>
-                      <th style={{ padding: '18px', textAlign: 'left', color: Colors.dashboard.text.primary.rgb, fontWeight: 600, fontSize: '18px', lineHeight: 1.6, borderBottom: `1px solid ${Colors.dashboard.borders.lighter.rgb}` }}>Execution ID</th>
-                      <th style={{ padding: '18px', textAlign: 'left', color: Colors.dashboard.text.primary.rgb, fontWeight: 600, fontSize: '18px', lineHeight: 1.6, borderBottom: `1px solid ${Colors.dashboard.borders.lighter.rgb}` }}>Workflow</th>
-                      <th style={{ padding: '18px', textAlign: 'left', color: Colors.dashboard.text.primary.rgb, fontWeight: 600, fontSize: '18px', lineHeight: 1.6, borderBottom: `1px solid ${Colors.dashboard.borders.lighter.rgb}` }}>Duration</th>
-                      <th style={{ padding: '18px', textAlign: 'left', color: Colors.dashboard.text.primary.rgb, fontWeight: 600, fontSize: '18px', lineHeight: 1.6, borderBottom: `1px solid ${Colors.dashboard.borders.lighter.rgb}` }}>Status</th>
-                      <th style={{ padding: '18px', textAlign: 'left', color: Colors.dashboard.text.primary.rgb, fontWeight: 600, fontSize: '18px', lineHeight: 1.6, borderBottom: `1px solid ${Colors.dashboard.borders.lighter.rgb}` }}>Timestamp</th>
+                      <th style={{ padding: '14px', textAlign: 'left', color: Colors.dashboard.text.primary.rgb, fontWeight: 600, fontSize: '14px', lineHeight: 1.6, borderBottom: `1px solid ${Colors.dashboard.borders.lighter.rgb}` }}>Execution ID</th>
+                      <th style={{ padding: '14px', textAlign: 'left', color: Colors.dashboard.text.primary.rgb, fontWeight: 600, fontSize: '14px', lineHeight: 1.6, borderBottom: `1px solid ${Colors.dashboard.borders.lighter.rgb}` }}>Workflow</th>
+                      <th style={{ padding: '14px', textAlign: 'left', color: Colors.dashboard.text.primary.rgb, fontWeight: 600, fontSize: '14px', lineHeight: 1.6, borderBottom: `1px solid ${Colors.dashboard.borders.lighter.rgb}` }}>Duration</th>
+                      <th style={{ padding: '14px', textAlign: 'left', color: Colors.dashboard.text.primary.rgb, fontWeight: 600, fontSize: '14px', lineHeight: 1.6, borderBottom: `1px solid ${Colors.dashboard.borders.lighter.rgb}` }}>Status</th>
+                      <th style={{ padding: '14px', textAlign: 'left', color: Colors.dashboard.text.primary.rgb, fontWeight: 600, fontSize: '14px', lineHeight: 1.6, borderBottom: `1px solid ${Colors.dashboard.borders.lighter.rgb}` }}>Timestamp</th>
                     </tr>
                   </thead>
                   <tbody>
@@ -284,21 +284,21 @@ export default function ExecutionHistoryTable({ clientId }: ExecutionHistoryTabl
                             borderBottom: index < paginatedData.length - 1 ? `1px solid ${Colors.dashboard.borders.lighter.rgb}` : 'none' 
                           }}
                         >
-                          <td style={{ padding: '18px', fontSize: '17px', lineHeight: 1.6, fontWeight: 500, color: Colors.dashboard.text.primary.rgb }}>
+                          <td style={{ padding: '14px', fontSize: '14px', lineHeight: 1.6, fontWeight: 500, color: Colors.dashboard.text.primary.rgb }}>
                             {execution.execution_id || '-'}
                           </td>
-                          <td style={{ padding: '18px', fontSize: '17px', lineHeight: 1.6, fontWeight: 500 }}>
+                          <td style={{ padding: '14px', fontSize: '14px', lineHeight: 1.6, fontWeight: 500 }}>
                             <span className="truncate block" style={{ color: Colors.dashboard.text.primary.rgb }}>
                               {workflowName}
                             </span>
                           </td>
-                          <td style={{ padding: '18px', color: Colors.dashboard.text.primary.rgb, fontSize: '17px', lineHeight: 1.6, fontWeight: 500 }}>
+                          <td style={{ padding: '14px', color: Colors.dashboard.text.primary.rgb, fontSize: '14px', lineHeight: 1.6, fontWeight: 500 }}>
                             {formatDuration(execution.duration_ms)}
                           </td>
-                          <td style={{ padding: '18px', fontSize: '17px', lineHeight: 1.6, fontWeight: 500 }}>
+                          <td style={{ padding: '14px', fontSize: '14px', lineHeight: 1.6, fontWeight: 500 }}>
                             <StatusBadge status={execution.status || 'error'} />
                           </td>
-                          <td style={{ padding: '18px', color: Colors.dashboard.text.primary.rgb, fontSize: '17px', lineHeight: 1.6, fontWeight: 500 }}>
+                          <td style={{ padding: '14px', color: Colors.dashboard.text.primary.rgb, fontSize: '14px', lineHeight: 1.6, fontWeight: 500 }}>
                             {formatDateTime(execution.started_at)}
                           </td>
                         </tr>

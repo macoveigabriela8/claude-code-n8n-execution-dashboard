@@ -110,8 +110,8 @@ export default function KPICardsBreakdown({
             display: 'flex',
             alignItems: 'center',
             justifyContent: 'center',
-            width: '18px',
-            height: '18px',
+            width: '14px',
+            height: '14px',
             borderRadius: '50%',
             border: `1px solid ${Colors.main.default.gray2.rgb}`,
             backgroundColor: 'transparent',
@@ -122,17 +122,17 @@ export default function KPICardsBreakdown({
         >
           <span style={{ 
             color: Colors.main.default.gray2.rgb,
-            fontSize: '12px',
+            fontSize: '10px',
             fontWeight: 600,
             lineHeight: '1',
             display: 'block',
           }}>?</span>
         </button>
       </TooltipTrigger>
-      <TooltipContent side="top" style={{ maxWidth: '500px', fontSize: '15px' }}>
+      <TooltipContent side="top" style={{ maxWidth: '400px', fontSize: '12px' }}>
         {typeof content === 'string' ? (
           <div style={{ 
-            fontSize: '15px', 
+            fontSize: '12px', 
             lineHeight: '1.6',
             whiteSpace: 'pre-line',
             textAlign: 'left'
@@ -140,7 +140,7 @@ export default function KPICardsBreakdown({
             {content}
           </div>
         ) : (
-          <div style={{ fontSize: '15px', lineHeight: '1.8' }}>
+          <div style={{ fontSize: '12px', lineHeight: '1.8' }}>
             {content}
           </div>
         )}
@@ -150,7 +150,7 @@ export default function KPICardsBreakdown({
 
   // Placeholder for consistent spacing when no tooltip is present
   const TooltipPlaceholder = () => (
-    <div style={{ width: '18px', height: '18px', flexShrink: 0 }} />
+    <div style={{ width: '14px', height: '14px', flexShrink: 0 }} />
   )
 
   // Helper function to get detailed formula for a workflow (extremely detailed for new employees)
@@ -393,7 +393,7 @@ export default function KPICardsBreakdown({
 
   return (
     <TooltipProvider delayDuration={200}>
-      <div style={{ marginTop: '20px' }}>
+      <div style={{ marginTop: '8px' }}>
         <Collapsible open={isOpen} onOpenChange={setIsOpen}>
           {/* Integrated section header with breakdown toggle */}
           <CollapsibleTrigger asChild>
@@ -403,9 +403,9 @@ export default function KPICardsBreakdown({
                 justifyContent: 'space-between', 
                 alignItems: 'center',
                 marginTop: 0,
-                marginBottom: isOpen ? '16px' : '0px',
+                marginBottom: isOpen ? '13px' : '0px',
                 backgroundColor: isHeaderHovered ? Colors.dashboard.header.background.rgb : '#F5F5F5',
-                padding: '12px 20px',
+                padding: '10px 16px',
                 transition: 'background-color 0.2s, color 0.2s',
                 cursor: 'pointer',
               }}
@@ -414,7 +414,7 @@ export default function KPICardsBreakdown({
             >
               <h3 style={{
                 color: isHeaderHovered ? Colors.dashboard.header.text.rgb : Colors.dashboard.text.primary.rgb,
-                fontSize: '18px',
+                fontSize: '11px',
                 fontWeight: 600,
                 margin: 0,
                 padding: 0,
@@ -423,7 +423,7 @@ export default function KPICardsBreakdown({
                 View Details
               </h3>
               <ChevronDown 
-                className="h-6 w-6" 
+                className="h-5 w-5" 
                 style={{ 
                   transform: isOpen ? 'rotate(180deg)' : 'none',
                   color: isHeaderHovered ? Colors.dashboard.header.text.rgb : Colors.dashboard.text.primary.rgb,
@@ -437,7 +437,7 @@ export default function KPICardsBreakdown({
               borderTop: `1px solid ${Colors.dashboard.borders.light.rgb}`,
               borderBottom: `1px solid ${Colors.dashboard.borders.light.rgb}`,
               backgroundColor: Colors.dashboard.background.white.rgb,
-              padding: '16px',
+              padding: '13px',
             }}>
               <Card style={{ border: 'none', backgroundColor: 'transparent', boxShadow: 'none' }}>
                 <CardContent className="p-0" style={{ padding: 0 }}>
@@ -466,7 +466,7 @@ export default function KPICardsBreakdown({
                         <CardHeader 
                           className=""
                           style={{ 
-                            padding: '6px 20px', 
+                            padding: '5px 16px', 
                             borderBottom: `1px solid rgba(0, 0, 0, 0.06)`,
                             display: 'flex',
                             flexDirection: 'row',
@@ -476,7 +476,7 @@ export default function KPICardsBreakdown({
                           }}>
                           <h4 style={{
                             color: 'rgba(13, 7, 106, 0.9)', 
-                            fontSize: '19px', 
+                            fontSize: '15px', 
                             fontWeight: 600,
                             letterSpacing: '-0.01em',
                             margin: 0,
@@ -492,29 +492,29 @@ export default function KPICardsBreakdown({
                           </h4>
                           <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginLeft: 'auto' }}>
                             <span style={{ 
-                              fontSize: '19px', 
+                              fontSize: '15px', 
                               fontWeight: 600, 
                               color: Colors.main.default.green.hex,
                               textAlign: 'right',
-                              minWidth: '80px'
+                              minWidth: '64px'
                             }}>
                               {formatCurrency(calculatedROI, currency)}
                             </span>
                             <TooltipIcon content={roiFormulaTooltip} />
                           </div>
                         </CardHeader>
-                        <CardContent style={{ padding: '16px 20px' }}>
+                        <CardContent style={{ padding: '13px 16px' }}>
                           {/* Labor Cost Saved Sub-section */}
                           {(summaryData.total_labor_cost_saved || 0) > 0 && (
                             <div style={{ marginBottom: (summaryData.total_value_created || 0) > 0 ? '20px' : '0' }}>
                               <div style={{
-                                padding: '8px 0',
-                                marginBottom: '8px',
+                                padding: '6px 0',
+                                marginBottom: '6px',
                                 borderBottom: '1px solid rgba(0, 0, 0, 0.04)'
                               }}>
                                 <h5 style={{ 
                                   color: 'rgba(13, 7, 106, 0.95)', 
-                                  fontSize: '15px', 
+                                  fontSize: '12px', 
                                   fontWeight: 600,
                                   letterSpacing: '-0.01em',
                                   margin: 0,
@@ -538,8 +538,8 @@ export default function KPICardsBreakdown({
                                         display: 'flex',
                                         justifyContent: 'space-between',
                                         alignItems: 'center',
-                                        padding: '12px 16px 12px 32px',
-                                        margin: '-12px -16px',
+                                        padding: '10px 13px 10px 26px',
+                                        margin: '-10px -13px',
                                         borderRadius: '6px',
                                         transition: 'background-color 0.15s ease',
                                         cursor: 'default',
@@ -554,7 +554,7 @@ export default function KPICardsBreakdown({
                                     >
                                       <span style={{ 
                                         color: 'rgba(13, 7, 106, 0.95)', 
-                                        fontSize: '16px', 
+                                        fontSize: '13px', 
                                         fontWeight: 400,
                                         lineHeight: '1.5',
                                         textAlign: 'left'
@@ -563,12 +563,12 @@ export default function KPICardsBreakdown({
                                       </span>
                                       <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
                                         <span style={{ 
-                                          fontSize: '16px', 
+                                          fontSize: '13px', 
                                           fontWeight: 600, 
                                           lineHeight: '1.5',
                                           color: Colors.main.default.green.hex,
                                           textAlign: 'right',
-                                          minWidth: '80px'
+                                          minWidth: '64px'
                                         }}>
                                           {formatCurrency(cost, currency)}
                                         </span>
@@ -585,13 +585,13 @@ export default function KPICardsBreakdown({
                           {(summaryData.total_value_created || 0) > 0 && (
                             <div>
                               <div style={{
-                                padding: '8px 0',
-                                marginBottom: '8px',
+                                padding: '6px 0',
+                                marginBottom: '6px',
                                 borderBottom: '1px solid rgba(0, 0, 0, 0.04)'
                               }}>
                                 <h5 style={{ 
                                   color: 'rgba(13, 7, 106, 0.95)', 
-                                  fontSize: '15px', 
+                                  fontSize: '12px', 
                                   fontWeight: 600,
                                   letterSpacing: '-0.01em',
                                   margin: 0,
@@ -615,8 +615,8 @@ export default function KPICardsBreakdown({
                                         display: 'flex',
                                         justifyContent: 'space-between',
                                         alignItems: 'center',
-                                        padding: '12px 16px 12px 32px',
-                                        margin: '-12px -16px',
+                                        padding: '10px 13px 10px 26px',
+                                        margin: '-10px -13px',
                                         borderRadius: '6px',
                                         transition: 'background-color 0.15s ease',
                                         cursor: 'default',
@@ -631,7 +631,7 @@ export default function KPICardsBreakdown({
                                     >
                                       <span style={{ 
                                         color: 'rgba(13, 7, 106, 0.95)', 
-                                        fontSize: '16px', 
+                                        fontSize: '13px', 
                                         fontWeight: 400,
                                         lineHeight: '1.5',
                                         textAlign: 'left'
@@ -640,12 +640,12 @@ export default function KPICardsBreakdown({
                                       </span>
                                       <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
                                         <span style={{ 
-                                          fontSize: '16px', 
+                                          fontSize: '13px', 
                                           fontWeight: 600, 
                                           lineHeight: '1.5',
                                           color: Colors.main.default.green.hex,
                                           textAlign: 'right',
-                                          minWidth: '80px'
+                                          minWidth: '64px'
                                         }}>
                                           {formatCurrency(cost, currency)}
                                         </span>
@@ -683,7 +683,7 @@ export default function KPICardsBreakdown({
                         <CardHeader 
                           className=""
                           style={{ 
-                            padding: '6px 20px', 
+                            padding: '5px 16px', 
                             borderBottom: `1px solid rgba(0, 0, 0, 0.06)`,
                             display: 'flex',
                             flexDirection: 'row',
@@ -693,7 +693,7 @@ export default function KPICardsBreakdown({
                           }}>
                           <h4 style={{
                             color: 'rgba(13, 7, 106, 0.9)', 
-                            fontSize: '19px', 
+                            fontSize: '15px', 
                             fontWeight: 600,
                             letterSpacing: '-0.01em',
                             margin: 0,
@@ -709,20 +709,20 @@ export default function KPICardsBreakdown({
                           </h4>
                           <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginLeft: 'auto' }}>
                             <span style={{ 
-                              fontSize: '19px', 
+                              fontSize: '15px', 
                               fontWeight: 600, 
                               color: Colors.main.default.red.hex,
                               textAlign: 'right',
-                              minWidth: '80px'
+                              minWidth: '64px'
                             }}>
                               {formatCurrency(totalAutomationCost, currency)}
                             </span>
                             <TooltipPlaceholder />
                           </div>
                         </CardHeader>
-                        <CardContent style={{ padding: '16px 20px' }}>
+                        <CardContent style={{ padding: '13px 16px' }}>
                           {/* Development Sub-section */}
-                          <div style={{ marginBottom: '20px' }}>
+                          <div style={{ marginBottom: '16px' }}>
                             <div style={{
                               padding: '8px 0',
                               marginBottom: '8px',
@@ -730,7 +730,7 @@ export default function KPICardsBreakdown({
                             }}>
                               <h5 style={{
                                 color: 'rgba(13, 7, 106, 0.95)', 
-                                fontSize: '15px', 
+                                fontSize: '12px', 
                                 fontWeight: 600,
                                 letterSpacing: '-0.01em',
                                 margin: 0,
@@ -766,7 +766,7 @@ export default function KPICardsBreakdown({
                                 >
                                   <span style={{ 
                                     color: 'rgba(13, 7, 106, 0.95)', 
-                                    fontSize: '16px', 
+                                    fontSize: '13px', 
                                     fontWeight: 400,
                                     lineHeight: '1.5',
                                     textAlign: 'left'
@@ -775,12 +775,12 @@ export default function KPICardsBreakdown({
                                   </span>
                                   <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
                                     <span style={{ 
-                                      fontSize: '16px', 
+                                      fontSize: '13px', 
                                       fontWeight: 600, 
                                       lineHeight: '1.5',
                                       color: Colors.main.default.red.hex,
                                       textAlign: 'right',
-                                      minWidth: '80px'
+                                      minWidth: '64px'
                                     }}>
                                       {formatCurrency(item.cost, currency)}
                                     </span>
@@ -800,7 +800,7 @@ export default function KPICardsBreakdown({
                             }}>
                               <h5 style={{ 
                                 color: 'rgba(13, 7, 106, 0.85)', 
-                                fontSize: '14px', 
+                                fontSize: '11px', 
                                 fontWeight: 600,
                                 letterSpacing: '-0.01em',
                                 margin: 0,
@@ -891,7 +891,7 @@ export default function KPICardsBreakdown({
                                   >
                                     <span style={{ 
                                       color: 'rgba(13, 7, 106, 0.95)', 
-                                      fontSize: '16px', 
+                                      fontSize: '13px', 
                                       fontWeight: 400,
                                       lineHeight: '1.5'
                                     }}>
@@ -899,12 +899,12 @@ export default function KPICardsBreakdown({
                                     </span>
                                     <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
                                       <span style={{ 
-                                        fontSize: '16px', 
+                                        fontSize: '13px', 
                                         fontWeight: 600, 
                                         lineHeight: '1.5',
                                         color: Colors.main.default.red.hex,
                                         textAlign: 'right',
-                                        minWidth: '80px'
+                                        minWidth: '64px'
                                       }}>
                                         {formatCurrency(totalCost, currency)}
                                       </span>
