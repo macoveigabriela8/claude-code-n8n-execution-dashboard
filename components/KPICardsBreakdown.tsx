@@ -510,7 +510,10 @@ export default function KPICardsBreakdown({
                               <div style={{
                                 padding: '6px 0',
                                 marginBottom: '6px',
-                                borderBottom: '1px solid rgba(0, 0, 0, 0.04)'
+                                borderBottom: '1px solid rgba(0, 0, 0, 0.04)',
+                                display: 'flex',
+                                justifyContent: 'space-between',
+                                alignItems: 'center'
                               }}>
                                 <h5 style={{ 
                                   color: 'rgba(13, 7, 106, 0.95)', 
@@ -525,6 +528,31 @@ export default function KPICardsBreakdown({
                                 }}>
                                   LABOR COST SAVED
                                 </h5>
+                                {laborCostWorkflows.length > 0 && (() => {
+                                  const subtotal = laborCostWorkflows.reduce((sum, w) => sum + (w.labor_cost_saved || 0), 0)
+                                  return (
+                                    <div style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
+                                      <span style={{
+                                        fontSize: '12px',
+                                        fontWeight: 600,
+                                        color: 'rgb(156, 160, 169)',
+                                        marginRight: '4px'
+                                      }}>
+                                        Subtotal:
+                                      </span>
+                                      <span style={{
+                                        fontSize: '14px',
+                                        fontWeight: 600,
+                                        color: Colors.main.default.green.hex,
+                                        textAlign: 'right',
+                                        minWidth: '64px'
+                                      }}>
+                                        {formatCurrency(subtotal, currency)}
+                                      </span>
+                                      <TooltipPlaceholder />
+                                    </div>
+                                  )
+                                })()}
                               </div>
                               <div style={{ display: 'flex', flexDirection: 'column', gap: '14px' }}>
                                 {laborCostWorkflows.map((workflow, index) => {
@@ -587,7 +615,10 @@ export default function KPICardsBreakdown({
                               <div style={{
                                 padding: '6px 0',
                                 marginBottom: '6px',
-                                borderBottom: '1px solid rgba(0, 0, 0, 0.04)'
+                                borderBottom: '1px solid rgba(0, 0, 0, 0.04)',
+                                display: 'flex',
+                                justifyContent: 'space-between',
+                                alignItems: 'center'
                               }}>
                                 <h5 style={{ 
                                   color: 'rgba(13, 7, 106, 0.95)', 
@@ -602,6 +633,31 @@ export default function KPICardsBreakdown({
                                 }}>
                                   VALUE CREATED
                                 </h5>
+                                {valueCreatedWorkflows.length > 0 && (() => {
+                                  const subtotal = valueCreatedWorkflows.reduce((sum, w) => sum + (w.value_created || 0), 0)
+                                  return (
+                                    <div style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
+                                      <span style={{
+                                        fontSize: '12px',
+                                        fontWeight: 600,
+                                        color: 'rgb(156, 160, 169)',
+                                        marginRight: '4px'
+                                      }}>
+                                        Subtotal:
+                                      </span>
+                                      <span style={{
+                                        fontSize: '14px',
+                                        fontWeight: 600,
+                                        color: Colors.main.default.green.hex,
+                                        textAlign: 'right',
+                                        minWidth: '64px'
+                                      }}>
+                                        {formatCurrency(subtotal, currency)}
+                                      </span>
+                                      <TooltipPlaceholder />
+                                    </div>
+                                  )
+                                })()}
                               </div>
                               <div style={{ display: 'flex', flexDirection: 'column', gap: '14px' }}>
                                 {valueCreatedWorkflows.map((workflow, index) => {
@@ -726,7 +782,10 @@ export default function KPICardsBreakdown({
                             <div style={{
                               padding: '8px 0',
                               marginBottom: '8px',
-                              borderBottom: '1px solid rgba(0, 0, 0, 0.04)'
+                              borderBottom: '1px solid rgba(0, 0, 0, 0.04)',
+                              display: 'flex',
+                              justifyContent: 'space-between',
+                              alignItems: 'center'
                             }}>
                               <h5 style={{
                                 color: 'rgba(13, 7, 106, 0.95)', 
@@ -741,6 +800,31 @@ export default function KPICardsBreakdown({
                               }}>
                                 DEVELOPMENT
                               </h5>
+                              {allDevelopmentItems.length > 0 && (() => {
+                                const developmentSubtotal = allDevelopmentItems.reduce((sum, item) => sum + item.cost, 0)
+                                return (
+                                  <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+                                    <span style={{
+                                      fontSize: '12px',
+                                      fontWeight: 600,
+                                      color: 'rgb(156, 160, 169)',
+                                      marginRight: '4px'
+                                    }}>
+                                      Subtotal:
+                                    </span>
+                                    <span style={{
+                                      fontSize: '13px',
+                                      fontWeight: 600,
+                                      color: Colors.main.default.red.hex,
+                                      textAlign: 'right',
+                                      minWidth: '64px'
+                                    }}>
+                                      {formatCurrency(developmentSubtotal, currency)}
+                                    </span>
+                                    <TooltipPlaceholder />
+                                  </div>
+                                )
+                              })()}
                             </div>
                             <div style={{ display: 'flex', flexDirection: 'column', gap: '14px' }}>
                               {allDevelopmentItems.map((item, index) => (
@@ -794,23 +878,54 @@ export default function KPICardsBreakdown({
                           {/* Tools Sub-section */}
                           <div>
                             <div style={{
-                              padding: '8px 0',
-                              marginBottom: '8px',
-                              borderBottom: '1px solid rgba(0, 0, 0, 0.04)'
+                              padding: '6px 0',
+                              marginBottom: '6px',
+                              borderBottom: '1px solid rgba(0, 0, 0, 0.04)',
+                              display: 'flex',
+                              justifyContent: 'space-between',
+                              alignItems: 'center'
                             }}>
                               <h5 style={{ 
-                                color: 'rgba(13, 7, 106, 0.85)', 
-                                fontSize: '11px', 
+                                color: 'rgba(13, 7, 106, 0.95)', 
+                                fontSize: '12px', 
                                 fontWeight: 600,
                                 letterSpacing: '-0.01em',
                                 margin: 0,
                                 padding: 0,
-                                lineHeight: '1.4',
+                                lineHeight: '1.5',
                                 textTransform: 'uppercase',
                                 textAlign: 'left'
                               }}>
                                 TOOLS
                               </h5>
+                              {(() => {
+                                const toolsSubtotal = [...commonCostTools, ...otherTools].reduce((sum, tool) => sum + calculateToolCostSinceStart(tool), 0)
+                                if (toolsSubtotal > 0 || commonCostTools.length > 0 || otherTools.length > 0) {
+                                  return (
+                                    <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+                                      <span style={{
+                                        fontSize: '12px',
+                                        fontWeight: 600,
+                                        color: 'rgb(156, 160, 169)',
+                                        marginRight: '4px'
+                                      }}>
+                                        Subtotal:
+                                      </span>
+                                      <span style={{
+                                        fontSize: '13px',
+                                        fontWeight: 600,
+                                        color: Colors.main.default.red.hex,
+                                        textAlign: 'right',
+                                        minWidth: '64px'
+                                      }}>
+                                        {formatCurrency(toolsSubtotal, currency)}
+                                      </span>
+                                      <TooltipPlaceholder />
+                                    </div>
+                                  )
+                                }
+                                return null
+                              })()}
                             </div>
                             <div style={{ display: 'flex', flexDirection: 'column', gap: '14px' }}>
                               {/* All Tools - Combined and sorted alphabetically */}

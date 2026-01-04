@@ -114,7 +114,7 @@ export default function SuccessRateGauge({ clientId }: SuccessRateGaugeProps) {
   }
 
   // Gauge dimensions - scaled to 80% (0.8)
-  const width = 560
+  const width = 600
   const height = 320
   const centerX = width / 2
   const centerY = height - 8 // Scaled: 10 * 0.8 = 8
@@ -211,8 +211,8 @@ export default function SuccessRateGauge({ clientId }: SuccessRateGaugeProps) {
   // Needle angle
   const needleAngle = percentageToAngle(Math.min(successRate, 100))
   const needleAngleRad = degToRad(needleAngle)
-  // Make needle extend 10% outside the arc: extend from radius to radius * 1.1
-  const needleLength = radius * 1.1
+  // Make needle extend 10% outside the arc: extend from radius to radius * 1.1, then reduce by 5%
+  const needleLength = radius * 1.1 * 0.95
   const needleX = centerX + needleLength * Math.cos(needleAngleRad)
   const needleY = centerY - needleLength * Math.sin(needleAngleRad) // Negative to point upward
 
@@ -235,24 +235,51 @@ export default function SuccessRateGauge({ clientId }: SuccessRateGaugeProps) {
   const targetLineEndX = centerX + radius * Math.cos(targetAngleRad)
   const targetLineEndY = centerY - radius * Math.sin(targetAngleRad) // Negative to curve upward
 
-  // Label positions - positioned closer to the arc edge
-  // For proportional segments, show key labels (0%, and segment boundaries if 3 or fewer segments, otherwise just 0% and 100%)
-  const labelPositions: Array<{ percent: number; x: number; y: number }> = []
+  // Label positions - positioned at consistent distance from arc edge
+  // Use same radius-based approach as segment labels for consistency
+  const labelOffset = 40 // Same offset as segment labels (radius + 40)
+  // Single constant for label radius to ensure all labels are at exactly the same distance
+  const labelRadius = radius + labelOffset
+  const labelPositions: Array<{ percent: number; x: number; y: number; textAnchor?: string }> = []
   
-  // Always show 0% at bottom left (closer to arc)
-  labelPositions.push({ percent: 0, x: centerX - radius - 30, y: centerY + 10 })
+  // Calculate 0% position using angle-based positioning (consistent with segment labels)
+  // Use same distance as segment labels, with "start" anchor to prevent clipping
+  const angle0 = percentageToAngle(0)
+  const angle0Rad = degToRad(angle0)
+  const x0 = centerX + labelRadius * Math.cos(angle0Rad)
+  const y0 = centerY - labelRadius * Math.sin(angle0Rad) // Negative to curve upward
+  labelPositions.push({ percent: 0, x: x0, y: y0, textAnchor: 'start' })
   
-  // For 2-3 segments, show middle labels above the arc (closer to arc)
+  // For 2-3 segments, show middle labels above the arc (using consistent radius-based positioning)
   // Use proportional boundaries instead of equal segments
   if (segmentCount === 2 && segmentBoundaries.length > 2) {
-    labelPositions.push({ percent: segmentBoundaries[1], x: centerX, y: centerY - radius - 20 })
+    const midAngle = percentageToAngle(segmentBoundaries[1])
+    const midAngleRad = degToRad(midAngle)
+    const midX = centerX + labelRadius * Math.cos(midAngleRad)
+    const midY = centerY - labelRadius * Math.sin(midAngleRad)
+    labelPositions.push({ percent: segmentBoundaries[1], x: midX, y: midY })
   } else if (segmentCount === 3 && segmentBoundaries.length > 3) {
-    labelPositions.push({ percent: segmentBoundaries[1], x: centerX - radius * 0.5 - 20, y: centerY - radius - 20 })
-    labelPositions.push({ percent: segmentBoundaries[2], x: centerX + radius * 0.5 + 20, y: centerY - radius - 20 })
+    const angle1 = percentageToAngle(segmentBoundaries[1])
+    const angle1Rad = degToRad(angle1)
+    const x1 = centerX + labelRadius * Math.cos(angle1Rad)
+    const y1 = centerY - labelRadius * Math.sin(angle1Rad)
+    labelPositions.push({ percent: segmentBoundaries[1], x: x1, y: y1 })
+    
+    const angle2 = percentageToAngle(segmentBoundaries[2])
+    const angle2Rad = degToRad(angle2)
+    const x2 = centerX + labelRadius * Math.cos(angle2Rad)
+    const y2 = centerY - labelRadius * Math.sin(angle2Rad)
+    labelPositions.push({ percent: segmentBoundaries[2], x: x2, y: y2 })
   }
   
-  // Always show 100% at bottom right (closer to arc)
-  labelPositions.push({ percent: 100, x: centerX + radius + 30, y: centerY + 10 })
+  // Calculate 100% position using angle-based positioning (consistent with segment labels)
+  // Use same distance as segment labels increased by 5%, with "end" anchor to prevent clipping
+  const angle100 = percentageToAngle(100)
+  const angle100Rad = degToRad(angle100)
+  const labelRadius100 = labelRadius * 1.05 // Increase distance by 5% for 100% label
+  const x100 = centerX + labelRadius100 * Math.cos(angle100Rad)
+  const y100 = centerY - labelRadius100 * Math.sin(angle100Rad) // Negative to curve upward
+  labelPositions.push({ percent: 100, x: x100, y: y100, textAnchor: 'end' })
 
   return (
     <Card 
@@ -355,7 +382,8 @@ export default function SuccessRateGauge({ clientId }: SuccessRateGaugeProps) {
                 key={index}
                 x={label.x}
                 y={label.y}
-                textAnchor="middle"
+                textAnchor={label.textAnchor || "middle"}
+                dominantBaseline="middle"
                 style={{
                   fontSize: '11px',
                   fill: Colors.dashboard.text.primary.rgb,
@@ -372,8 +400,7 @@ export default function SuccessRateGauge({ clientId }: SuccessRateGaugeProps) {
               const midPercent = (startPercent + endPercent) / 2
               const midAngle = percentageToAngle(midPercent)
               const midAngleRad = degToRad(midAngle)
-              // Position label further out than the radius (radius + 50px offset)
-              const labelRadius = radius + 40
+              // Position label using the same labelRadius constant as all other labels
               const labelX = centerX + labelRadius * Math.cos(midAngleRad)
               const labelY = centerY - labelRadius * Math.sin(midAngleRad) // Negative to curve upward
               const workflow = workflowsWithExecutions[index]
@@ -448,14 +475,16 @@ export default function SuccessRateGauge({ clientId }: SuccessRateGaugeProps) {
           )}
 
           {/* Success rate and target - positioned below the gauge */}
-          <div style={{ marginTop: '8px', textAlign: 'center' }}>
+          <div style={{ marginTop: '8px', textAlign: 'center', paddingBottom: '4px', overflow: 'visible' }}>
             <div style={{ 
               fontSize: '19px', // Scaled: 24px * 0.8 = 19.2px -> 19px
               fontWeight: 700, 
               color: Colors.main.default.black.rgb, // Changed to black (was gray1)
               fontFamily: 'Roboto, sans-serif',
               lineHeight: '1.2',
-              marginBottom: '6px'
+              marginBottom: '6px',
+              overflow: 'visible',
+              whiteSpace: 'nowrap'
             }}>
               {successRate.toFixed(0)}%
             </div>
