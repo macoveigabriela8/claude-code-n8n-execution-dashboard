@@ -99,7 +99,20 @@ export default function SuccessRateGauge({ clientId }: SuccessRateGaugeProps) {
     )
   }
 
-  const successRate = data.success_rate_24h || 0
+  // Always calculate success rate dynamically from execution counts to ensure accuracy
+  // This ensures the rate reflects actual failures (e.g., 3 failures out of 1361 = 99.7%)
+  const successfulExecutions = data.success_24h ?? 0
+  const failedExecutions = data.errors_24h ?? 0
+  const totalFromComponents = successfulExecutions + failedExecutions
+  
+  let successRate = 0
+  if (totalFromComponents > 0) {
+    // Calculate with one decimal precision: (1358 / 1361) * 100 = 99.78% -> 99.7%
+    successRate = Math.round(((successfulExecutions / totalFromComponents) * 100) * 10) / 10
+  } else {
+    // Fallback to database value only if we don't have component data
+    successRate = Math.round((data.success_rate_24h ?? 0) * 10) / 10
+  }
   const targetRate = 95
 
   // Format last update timestamp as HH:mm
@@ -162,8 +175,19 @@ export default function SuccessRateGauge({ clientId }: SuccessRateGaugeProps) {
   }
 
   // Filter workflows with executions in the last 24 hours and match with ROI data
+  // Exclude workflows with 0% success rate (all failures)
   const workflowsWithExecutions = workflowStats
-    .filter(stat => (stat.executions_24h || 0) > 0)
+    .filter(stat => {
+      const executions = stat.executions_24h || 0
+      if (executions === 0) return false
+      
+      // Calculate success rate for this workflow
+      const success = stat.success_24h || 0
+      const workflowSuccessRate = executions > 0 ? (success / executions) * 100 : 0
+      
+      // Exclude workflows with 0% success rate (all failures)
+      return workflowSuccessRate > 0
+    })
     .map(stat => {
       // Match with ROI data to get workflow name and other properties
       const roiData = workflowROIData.find(roi => roi.workflow_id === stat.workflow_id)
@@ -235,51 +259,9 @@ export default function SuccessRateGauge({ clientId }: SuccessRateGaugeProps) {
   const targetLineEndX = centerX + radius * Math.cos(targetAngleRad)
   const targetLineEndY = centerY - radius * Math.sin(targetAngleRad) // Negative to curve upward
 
-  // Label positions - positioned at consistent distance from arc edge
-  // Use same radius-based approach as segment labels for consistency
-  const labelOffset = 40 // Same offset as segment labels (radius + 40)
-  // Single constant for label radius to ensure all labels are at exactly the same distance
+  // Label radius for segment percentage labels - all labels at consistent distance from arc
+  const labelOffset = 40 // Distance from arc edge
   const labelRadius = radius + labelOffset
-  const labelPositions: Array<{ percent: number; x: number; y: number; textAnchor?: "inherit" | "end" | "start" | "middle" }> = []
-  
-  // Calculate 0% position using angle-based positioning (consistent with segment labels)
-  // Use same distance as segment labels, with "start" anchor to prevent clipping
-  const angle0 = percentageToAngle(0)
-  const angle0Rad = degToRad(angle0)
-  const x0 = centerX + labelRadius * Math.cos(angle0Rad)
-  const y0 = centerY - labelRadius * Math.sin(angle0Rad) // Negative to curve upward
-  labelPositions.push({ percent: 0, x: x0, y: y0, textAnchor: 'start' })
-  
-  // For 2-3 segments, show middle labels above the arc (using consistent radius-based positioning)
-  // Use proportional boundaries instead of equal segments
-  if (segmentCount === 2 && segmentBoundaries.length > 2) {
-    const midAngle = percentageToAngle(segmentBoundaries[1])
-    const midAngleRad = degToRad(midAngle)
-    const midX = centerX + labelRadius * Math.cos(midAngleRad)
-    const midY = centerY - labelRadius * Math.sin(midAngleRad)
-    labelPositions.push({ percent: segmentBoundaries[1], x: midX, y: midY })
-  } else if (segmentCount === 3 && segmentBoundaries.length > 3) {
-    const angle1 = percentageToAngle(segmentBoundaries[1])
-    const angle1Rad = degToRad(angle1)
-    const x1 = centerX + labelRadius * Math.cos(angle1Rad)
-    const y1 = centerY - labelRadius * Math.sin(angle1Rad)
-    labelPositions.push({ percent: segmentBoundaries[1], x: x1, y: y1 })
-    
-    const angle2 = percentageToAngle(segmentBoundaries[2])
-    const angle2Rad = degToRad(angle2)
-    const x2 = centerX + labelRadius * Math.cos(angle2Rad)
-    const y2 = centerY - labelRadius * Math.sin(angle2Rad)
-    labelPositions.push({ percent: segmentBoundaries[2], x: x2, y: y2 })
-  }
-  
-  // Calculate 100% position using angle-based positioning (consistent with segment labels)
-  // Use same distance as segment labels increased by 5%, with "end" anchor to prevent clipping
-  const angle100 = percentageToAngle(100)
-  const angle100Rad = degToRad(angle100)
-  const labelRadius100 = labelRadius * 1.05 // Increase distance by 5% for 100% label
-  const x100 = centerX + labelRadius100 * Math.cos(angle100Rad)
-  const y100 = centerY - labelRadius100 * Math.sin(angle100Rad) // Negative to curve upward
-  labelPositions.push({ percent: 100, x: x100, y: y100, textAnchor: 'end' })
 
   return (
     <Card 
@@ -376,33 +358,12 @@ export default function SuccessRateGauge({ clientId }: SuccessRateGaugeProps) {
               strokeLinecap="round"
             />
 
-            {/* Scale labels - positioned along outer edge of arc */}
-            {labelPositions.map((label, index) => (
-              <text
-                key={index}
-                x={label.x}
-                y={label.y}
-                textAnchor={label.textAnchor || "middle"}
-                dominantBaseline="middle"
-                style={{
-                  fontSize: '11px',
-                  fill: Colors.dashboard.text.primary.rgb,
-                  fontFamily: 'Roboto, sans-serif',
-                }}
-              >
-                {label.percent.toFixed(0)}%
-              </text>
-            ))}
-
-            {/* Segment percentage labels - positioned outside the arc */}
+            {/* Segment percentage labels - positioned outside the arc at consistent distance */}
             {totalExecutions > 0 && segmentBoundaries.slice(0, -1).map((startPercent, index) => {
               const endPercent = segmentBoundaries[index + 1]
               const midPercent = (startPercent + endPercent) / 2
               const midAngle = percentageToAngle(midPercent)
               const midAngleRad = degToRad(midAngle)
-              // Position label using the same labelRadius constant as all other labels
-              const labelX = centerX + labelRadius * Math.cos(midAngleRad)
-              const labelY = centerY - labelRadius * Math.sin(midAngleRad) // Negative to curve upward
               const workflow = workflowsWithExecutions[index]
               const segmentPercent = totalExecutions > 0 ? ((workflow.executions_24h / totalExecutions) * 100) : 0
               
@@ -410,6 +371,10 @@ export default function SuccessRateGauge({ clientId }: SuccessRateGaugeProps) {
               if (segmentPercent < 0.5) {
                 return null
               }
+              
+              // All segment labels use the same labelRadius for consistent distance from arc
+              const labelX = centerX + labelRadius * Math.cos(midAngleRad)
+              const labelY = centerY - labelRadius * Math.sin(midAngleRad) // Negative to curve upward
               
               return (
                 <text
@@ -486,7 +451,7 @@ export default function SuccessRateGauge({ clientId }: SuccessRateGaugeProps) {
               overflow: 'visible',
               whiteSpace: 'nowrap'
             }}>
-              {successRate.toFixed(0)}%
+              {successRate.toFixed(1)}%
             </div>
             <p style={{ 
               fontSize: '11px', 

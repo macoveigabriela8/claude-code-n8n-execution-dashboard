@@ -8,6 +8,7 @@ import { RecentExecution } from '@/types/supabase'
 import { Activity } from 'lucide-react'
 import { LineChart, Line, XAxis, YAxis, Tooltip, ResponsiveContainer } from 'recharts'
 import { Colors } from '@/lib/design-tokens'
+import { Tooltip as UITooltip, TooltipTrigger, TooltipContent, TooltipProvider } from '@/components/ui/tooltip'
 
 interface ExecutionTrendChartProps {
   clientId: string
@@ -145,6 +146,16 @@ export default function ExecutionTrendChart({ clientId }: ExecutionTrendChartPro
       .reverse() // Reverse to show oldest to newest
   }, [data])
 
+  // Calculate the maximum failed value for the right Y-axis domain
+  const maxFailed = useMemo(() => {
+    if (hourlyData.length === 0) return 1
+    const max = Math.max(...hourlyData.map(d => d.failed))
+    // Add 20% padding, but ensure minimum domain of at least 1
+    // If max is 0, use 0.5 as the max to show a small range
+    if (max === 0) return 0.5
+    return Math.ceil(max * 1.2)
+  }, [hourlyData])
+
   if (loading) {
     return (
       <Card>
@@ -172,52 +183,87 @@ export default function ExecutionTrendChart({ clientId }: ExecutionTrendChartPro
   }
 
   return (
-    <Card 
-      style={{ 
-        marginTop: '0px',
-        border: isCardHovered ? `1px solid ${Colors.dashboard.text.primary.rgb}` : undefined,
-        height: '100%',
-        display: 'flex',
-        flexDirection: 'column'
-      }}
-      onMouseEnter={() => setIsCardHovered(true)}
-      onMouseLeave={() => setIsCardHovered(false)}
-    >
-      <CardHeader style={{ padding: '16px 16px 4px', position: 'relative' }}>
-        <h4 style={{ 
-          color: Colors.dashboard.text.primary.rgb,
-          maxWidth: '463px',
-          fontSize: 'calc(1.02rem + 0.24vw)', 
-          fontWeight: 500, 
-          margin: 0, 
-          padding: 0, 
-          paddingRight: '144px',
-          fontFamily: 'Roboto',
-          wordWrap: 'break-word',
-          WebkitLineClamp: 2,
-          WebkitBoxOrient: 'vertical' as any,
-          display: '-webkit-box',
-          overflow: 'hidden',
-          textOverflow: 'ellipsis',
-          whiteSpace: 'pre-wrap',
-          lineHeight: 1.2,
-          textAlign: 'left'
-        }}>Execution Trend</h4>
-        <span style={{
-          position: 'absolute',
-          top: '11px',
-          right: '8px',
-          fontSize: '0.7rem',
-          color: Colors.main.default.gray2.rgb,
-          fontFamily: 'Roboto',
-          margin: 0,
-          padding: 0,
-          lineHeight: 1.2,
-          whiteSpace: 'nowrap'
-        }}>
-          Last 24 H
-        </span>
-      </CardHeader>
+    <TooltipProvider>
+      <Card 
+        style={{ 
+          marginTop: '0px',
+          border: isCardHovered ? `1px solid ${Colors.dashboard.text.primary.rgb}` : undefined,
+          height: '100%',
+          display: 'flex',
+          flexDirection: 'column'
+        }}
+        onMouseEnter={() => setIsCardHovered(true)}
+        onMouseLeave={() => setIsCardHovered(false)}
+      >
+        <CardHeader style={{ padding: '16px 16px 4px', position: 'relative' }}>
+          <div style={{ display: 'flex', alignItems: 'center', gap: '6px', paddingRight: '144px' }}>
+            <h4 style={{ 
+              color: Colors.dashboard.text.primary.rgb,
+              maxWidth: '463px',
+              fontSize: 'calc(1.02rem + 0.24vw)', 
+              fontWeight: 500, 
+              margin: 0, 
+              padding: 0, 
+              fontFamily: 'Roboto',
+              wordWrap: 'break-word',
+              WebkitLineClamp: 2,
+              WebkitBoxOrient: 'vertical' as any,
+              display: '-webkit-box',
+              overflow: 'hidden',
+              textOverflow: 'ellipsis',
+              whiteSpace: 'pre-wrap',
+              lineHeight: 1.2,
+              textAlign: 'left'
+            }}>Execution Trend</h4>
+            <UITooltip>
+              <TooltipTrigger asChild>
+                <button
+                  type="button"
+                  style={{
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                    width: '14px',
+                    height: '14px',
+                    borderRadius: '50%',
+                    border: `1px solid ${Colors.main.default.gray2.rgb}`,
+                    backgroundColor: 'transparent',
+                    cursor: 'pointer',
+                    padding: 0,
+                    flexShrink: 0,
+                  }}
+                >
+                  <span style={{ 
+                    color: Colors.main.default.gray2.rgb,
+                    fontSize: '10px',
+                    fontWeight: 600,
+                    lineHeight: '1',
+                    display: 'block',
+                  }}>?</span>
+                </button>
+              </TooltipTrigger>
+              <TooltipContent>
+                <p style={{ maxWidth: '280px', fontSize: '12px', lineHeight: 1.5 }}>
+                  Data is aggregated into 2-hour intervals. Each point (e.g., 12:00) represents executions from that hour to 1 hour 59 minutes later (e.g., 12:00-13:59).
+                </p>
+              </TooltipContent>
+            </UITooltip>
+          </div>
+          <span style={{
+            position: 'absolute',
+            top: '11px',
+            right: '8px',
+            fontSize: '0.7rem',
+            color: Colors.main.default.gray2.rgb,
+            fontFamily: 'Roboto',
+            margin: 0,
+            padding: 0,
+            lineHeight: 1.2,
+            whiteSpace: 'nowrap'
+          }}>
+            Last 24 H
+          </span>
+        </CardHeader>
       <CardContent style={{ padding: '16px', flex: 1, display: 'flex', flexDirection: 'column' }}>
         {hourlyData.length === 0 ? (
           <div className="flex flex-col items-center justify-center py-12">
@@ -281,7 +327,9 @@ export default function ExecutionTrendChart({ clientId }: ExecutionTrendChartPro
                   orientation="right"
                   stroke={Colors.main.default.gray2.hex}
                   style={{ fontSize: '10px' }}
-                  label={{ value: 'Failed Executions', angle: 90, position: 'insideRight', style: { textAnchor: 'middle', fill: Colors.main.default.gray2.hex } }}
+                  width={60}
+                  domain={[0, maxFailed]}
+                  label={{ value: 'Failed Executions', angle: 90, position: 'insideRight', style: { textAnchor: 'middle', fill: Colors.main.default.gray2.hex, dx: -10 } }}
                 />
                 <Tooltip
                   cursor={false}
@@ -355,6 +403,7 @@ export default function ExecutionTrendChart({ clientId }: ExecutionTrendChartPro
         )}
       </CardContent>
     </Card>
+    </TooltipProvider>
   )
 }
 
