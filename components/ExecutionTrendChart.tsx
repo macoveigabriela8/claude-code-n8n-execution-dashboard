@@ -329,7 +329,7 @@ export default function ExecutionTrendChart({ clientId }: ExecutionTrendChartPro
                   style={{ fontSize: '10px' }}
                   width={60}
                   domain={[0, maxFailed]}
-                  label={{ value: 'Failed Executions', angle: 90, position: 'insideRight', style: { textAnchor: 'middle', fill: Colors.main.default.gray2.hex, dx: -10 } }}
+                  label={{ value: 'Failed Executions', angle: 90, position: 'insideRight', style: { textAnchor: 'middle', fill: Colors.main.default.gray2.hex } as React.CSSProperties }}
                 />
                 <Tooltip
                   cursor={false}
