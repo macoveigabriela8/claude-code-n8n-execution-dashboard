@@ -19,6 +19,8 @@ interface ExecutionFiltersProps {
   workflowOptions: string[]
   daysFilter: number
   onDaysChange: (days: number) => void
+  showOnlyWorkDone: boolean
+  onShowOnlyWorkDoneChange: (show: boolean) => void
 }
 
 export default function ExecutionFilters({
@@ -29,6 +31,8 @@ export default function ExecutionFilters({
   workflowOptions,
   daysFilter,
   onDaysChange,
+  showOnlyWorkDone,
+  onShowOnlyWorkDoneChange,
 }: ExecutionFiltersProps) {
   const statusOptions = [
     { value: 'all', label: 'All' },
@@ -72,53 +76,79 @@ export default function ExecutionFilters({
   }, [workflowOptions])
 
   return (
-    <div className="flex flex-wrap items-center gap-4">
-      <div className="flex gap-2 flex-wrap">
-        {statusOptions.map((option) => (
-          <button
-            key={option.value}
-            onClick={() => onStatusChange(option.value)}
-            className="transition-opacity"
-          >
-            <Badge
-              variant={statusFilter === option.value ? 'default' : 'outline'}
-              className="cursor-pointer hover:opacity-80 text-sm"
+    <div className="flex flex-wrap items-center justify-between gap-4">
+      <div className="flex flex-wrap items-center gap-4">
+        <div className="flex gap-2 flex-wrap">
+          {statusOptions.map((option) => (
+            <button
+              key={option.value}
+              onClick={() => onStatusChange(option.value)}
+              className="transition-opacity"
             >
-              {option.label}
-            </Badge>
-          </button>
-        ))}
+              <Badge
+                variant={statusFilter === option.value ? 'default' : 'outline'}
+                className="cursor-pointer hover:opacity-80 text-sm"
+              >
+                {option.label}
+              </Badge>
+            </button>
+          ))}
+        </div>
+        <Select value={workflowFilter} onValueChange={onWorkflowChange}>
+          <SelectTrigger 
+            className="w-full sm:w-auto !border-[#E8E8E8] focus:ring-0 focus:ring-offset-0"
+            style={{
+              minWidth: workflowWidth,
+            }}
+          >
+            <SelectValue placeholder="Select a workflow..." />
+          </SelectTrigger>
+          <SelectContent>
+            <SelectItem value="all">All Workflows</SelectItem>
+            {workflowOptions.map((workflow) => (
+              <SelectItem key={workflow} value={workflow}>
+                {workflow}
+              </SelectItem>
+            ))}
+          </SelectContent>
+        </Select>
+        <Select value={daysFilter.toString()} onValueChange={(value) => onDaysChange(parseInt(value))}>
+          <SelectTrigger className="w-full sm:w-[200px] !border-[#E8E8E8] focus:ring-0 focus:ring-offset-0">
+            <SelectValue placeholder="Time period" />
+          </SelectTrigger>
+          <SelectContent>
+            {daysOptions.map((option) => (
+              <SelectItem key={option.value} value={option.value.toString()}>
+                {option.label}
+              </SelectItem>
+            ))}
+          </SelectContent>
+        </Select>
       </div>
-      <Select value={workflowFilter} onValueChange={onWorkflowChange}>
-        <SelectTrigger 
-          className="w-full sm:w-auto !border-[#E8E8E8] focus:ring-0 focus:ring-offset-0"
-          style={{
-            minWidth: workflowWidth,
-          }}
+      <div className="flex gap-2 flex-shrink-0">
+        <button
+          onClick={() => onShowOnlyWorkDoneChange(true)}
+          className="transition-opacity"
         >
-          <SelectValue placeholder="Select a workflow..." />
-        </SelectTrigger>
-        <SelectContent>
-          <SelectItem value="all">All Workflows</SelectItem>
-          {workflowOptions.map((workflow) => (
-            <SelectItem key={workflow} value={workflow}>
-              {workflow}
-            </SelectItem>
-          ))}
-        </SelectContent>
-      </Select>
-      <Select value={daysFilter.toString()} onValueChange={(value) => onDaysChange(parseInt(value))}>
-        <SelectTrigger className="w-full sm:w-[200px] !border-[#E8E8E8] focus:ring-0 focus:ring-offset-0">
-          <SelectValue placeholder="Time period" />
-        </SelectTrigger>
-        <SelectContent>
-          {daysOptions.map((option) => (
-            <SelectItem key={option.value} value={option.value.toString()}>
-              {option.label}
-            </SelectItem>
-          ))}
-        </SelectContent>
-      </Select>
+          <Badge
+            variant={showOnlyWorkDone ? 'default' : 'outline'}
+            className="cursor-pointer hover:opacity-80 text-sm whitespace-nowrap"
+          >
+            Work Done
+          </Badge>
+        </button>
+        <button
+          onClick={() => onShowOnlyWorkDoneChange(false)}
+          className="transition-opacity"
+        >
+          <Badge
+            variant={!showOnlyWorkDone ? 'default' : 'outline'}
+            className="cursor-pointer hover:opacity-80 text-sm whitespace-nowrap"
+          >
+            Show All
+          </Badge>
+        </button>
+      </div>
     </div>
   )
 }

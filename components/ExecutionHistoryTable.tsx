@@ -31,7 +31,7 @@ export default function ExecutionHistoryTable({ clientId }: ExecutionHistoryTabl
   const [workflowFilter, setWorkflowFilter] = useState<string>('all')
   const [daysFilter, setDaysFilter] = useState<number>(1) // Default: Last 24 hours
   const [currentPage, setCurrentPage] = useState(1)
-  const [showNoAction, setShowNoAction] = useState<boolean>(false) // Default: hide "No action" executions
+  const [showOnlyWorkDone, setShowOnlyWorkDone] = useState<boolean>(true) // Default: show only work done
   
   // Use refs to track previous filter values to detect changes
   const prevStatusFilterRef = useRef(statusFilter)
@@ -164,8 +164,8 @@ export default function ExecutionHistoryTable({ clientId }: ExecutionHistoryTabl
   // Ensure data is always an array
   let filteredData = Array.isArray(data) ? data : []
   
-  // Filter out "No action" executions if showNoAction is false
-  if (!showNoAction) {
+  // Filter out "No action" executions if showing only work done
+  if (showOnlyWorkDone) {
     filteredData = filteredData.filter(execution => {
       if (!execution.details) return true // Keep executions with no details
       const detailsStr = typeof execution.details === 'string' ? execution.details : JSON.stringify(execution.details)
@@ -180,13 +180,13 @@ export default function ExecutionHistoryTable({ clientId }: ExecutionHistoryTabl
   // Pagination - use filtered count
   const totalPages = Math.ceil(filteredCount / ITEMS_PER_PAGE)
 
-  const activeFilterCount = (statusFilter !== 'all' ? 1 : 0) + (workflowFilter !== 'all' ? 1 : 0) + (daysFilter !== 1 ? 1 : 0) + (!showNoAction ? 1 : 0)
+  const activeFilterCount = (statusFilter !== 'all' ? 1 : 0) + (workflowFilter !== 'all' ? 1 : 0) + (daysFilter !== 1 ? 1 : 0) + (showOnlyWorkDone ? 1 : 0)
 
   const clearAllFilters = () => {
     setStatusFilter('all')
     setWorkflowFilter('all')
     setDaysFilter(1) // Reset to default: Last 24 hours
-    setShowNoAction(false) // Reset to default: hide "No action"
+    setShowOnlyWorkDone(true) // Reset to default: show only work done
   }
 
   return (
@@ -219,33 +219,22 @@ export default function ExecutionHistoryTable({ clientId }: ExecutionHistoryTabl
                 textAlign: 'left'
               }}>Execution History</h4>
             </div>
-            <div className="flex items-center gap-2 flex-shrink-0">
-              <label className="flex items-center gap-2 cursor-pointer">
-                <span className="text-sm text-muted-foreground">Show only work done</span>
-                <input
-                  type="checkbox"
-                  checked={!showNoAction}
-                  onChange={(e) => setShowNoAction(!e.target.checked)}
-                  className="h-4 w-4 rounded border-gray-300 text-primary focus:ring-2 focus:ring-primary cursor-pointer"
-                />
-              </label>
-              {activeFilterCount > 0 && (
-                <>
-                  <Badge variant="secondary" className="text-xs">
-                    {activeFilterCount} filter{activeFilterCount > 1 ? 's' : ''} active
-                  </Badge>
-                  <Button
-                    variant="ghost"
-                    size="sm"
-                    onClick={clearAllFilters}
-                    className="h-7 text-xs"
-                  >
-                    <X className="h-3 w-3 mr-1" />
-                    Clear All
-                  </Button>
-                </>
-              )}
-            </div>
+            {activeFilterCount > 0 && (
+              <div className="flex items-center gap-2 flex-shrink-0">
+                <Badge variant="secondary" className="text-xs">
+                  {activeFilterCount} filter{activeFilterCount > 1 ? 's' : ''} active
+                </Badge>
+                <Button
+                  variant="ghost"
+                  size="sm"
+                  onClick={clearAllFilters}
+                  className="h-7 text-xs"
+                >
+                  <X className="h-3 w-3 mr-1" />
+                  Clear All
+                </Button>
+              </div>
+            )}
           </div>
           <div className="mt-4">
             <ExecutionFilters
@@ -256,6 +245,8 @@ export default function ExecutionHistoryTable({ clientId }: ExecutionHistoryTabl
               workflowOptions={workflowOptions}
               daysFilter={daysFilter}
               onDaysChange={setDaysFilter}
+              showOnlyWorkDone={showOnlyWorkDone}
+              onShowOnlyWorkDoneChange={setShowOnlyWorkDone}
             />
           </div>
         </CardHeader>
@@ -365,7 +356,7 @@ export default function ExecutionHistoryTable({ clientId }: ExecutionHistoryTabl
               
               <div className="flex flex-col sm:flex-row items-center justify-between gap-4 mt-6 pt-4 border-t">
                   <div className="text-sm text-muted-foreground text-center sm:text-left">
-                    {statusFilter !== 'all' || workflowFilter !== 'all' || daysFilter !== 1 || !showNoAction
+                    {statusFilter !== 'all' || workflowFilter !== 'all' || daysFilter !== 1 || showOnlyWorkDone
                       ? `Showing ${paginatedData.length} of ${filteredCount} executions (filtered)`
                       : `Showing ${((currentPage - 1) * ITEMS_PER_PAGE) + 1}-${Math.min(currentPage * ITEMS_PER_PAGE, filteredCount)} of ${filteredCount} executions`
                     }

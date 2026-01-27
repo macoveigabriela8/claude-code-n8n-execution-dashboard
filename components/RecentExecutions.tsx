@@ -34,7 +34,7 @@ export default function RecentExecutions({ clientId }: RecentExecutionsProps) {
   const [workflowFilter, setWorkflowFilter] = useState<string>('all')
   const [daysFilter, setDaysFilter] = useState<number>(1)
   const [currentPage, setCurrentPage] = useState(1)
-  const [showNoAction, setShowNoAction] = useState<boolean>(false)
+  const [showOnlyWorkDone, setShowOnlyWorkDone] = useState<boolean>(true)
 
   useEffect(() => {
     async function fetchData() {
@@ -76,8 +76,8 @@ export default function RecentExecutions({ clientId }: RecentExecutionsProps) {
     if (workflowFilter !== 'all' && execution.workflow_name !== workflowFilter) {
       return false
     }
-    // Filter out "No action" executions if showNoAction is false
-    if (!showNoAction) {
+    // Filter out "No action" executions if showing only work done
+    if (showOnlyWorkDone) {
       if (execution.details) {
         const detailsStr = typeof execution.details === 'string' ? execution.details : JSON.stringify(execution.details)
         if (detailsStr.toLowerCase().startsWith('no')) {
@@ -94,12 +94,12 @@ export default function RecentExecutions({ clientId }: RecentExecutionsProps) {
   const endIndex = startIndex + ITEMS_PER_PAGE
   const paginatedData = filteredData.slice(startIndex, endIndex)
 
-  const activeFilterCount = (statusFilter !== 'all' ? 1 : 0) + (workflowFilter !== 'all' ? 1 : 0) + (!showNoAction ? 1 : 0)
+  const activeFilterCount = (statusFilter !== 'all' ? 1 : 0) + (workflowFilter !== 'all' ? 1 : 0) + (showOnlyWorkDone ? 1 : 0)
 
   const clearAllFilters = () => {
     setStatusFilter('all')
     setWorkflowFilter('all')
-    setShowNoAction(false)
+    setShowOnlyWorkDone(true)
   }
 
   return (
@@ -137,6 +137,8 @@ export default function RecentExecutions({ clientId }: RecentExecutionsProps) {
               workflowOptions={workflowOptions}
               daysFilter={daysFilter}
               onDaysChange={setDaysFilter}
+              showOnlyWorkDone={showOnlyWorkDone}
+              onShowOnlyWorkDoneChange={setShowOnlyWorkDone}
             />
           </div>
         </CardHeader>
