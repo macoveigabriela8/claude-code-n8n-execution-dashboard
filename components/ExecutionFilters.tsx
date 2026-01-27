@@ -132,7 +132,7 @@ export default function ExecutionFilters({
             variant={!showNoAction ? 'default' : 'outline'}
             className="cursor-pointer hover:opacity-80 text-sm"
           >
-            Action Taken
+            Work Done
           </Badge>
         </button>
         <button
