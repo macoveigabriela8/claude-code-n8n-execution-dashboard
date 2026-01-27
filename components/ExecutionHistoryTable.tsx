@@ -162,19 +162,23 @@ export default function ExecutionHistoryTable({ clientId }: ExecutionHistoryTabl
 
   // Client-side filtering for Details column (action vs no action)
   // Ensure data is always an array
-  let paginatedData = Array.isArray(data) ? data : []
+  let filteredData = Array.isArray(data) ? data : []
   
   // Filter out "No action" executions if showNoAction is false
   if (!showNoAction) {
-    paginatedData = paginatedData.filter(execution => {
+    filteredData = filteredData.filter(execution => {
       if (!execution.details) return true // Keep executions with no details
       const detailsStr = typeof execution.details === 'string' ? execution.details : JSON.stringify(execution.details)
       return !detailsStr.toLowerCase().startsWith('no')
     })
   }
 
-  // Pagination - use server-side count
-  const totalPages = Math.ceil(totalCount / ITEMS_PER_PAGE)
+  // Use filtered count for display and pagination
+  const filteredCount = filteredData.length
+  const paginatedData = filteredData
+  
+  // Pagination - use filtered count
+  const totalPages = Math.ceil(filteredCount / ITEMS_PER_PAGE)
 
   const activeFilterCount = (statusFilter !== 'all' ? 1 : 0) + (workflowFilter !== 'all' ? 1 : 0) + (daysFilter !== 1 ? 1 : 0) + (!showNoAction ? 1 : 0)
 
@@ -215,22 +219,33 @@ export default function ExecutionHistoryTable({ clientId }: ExecutionHistoryTabl
                 textAlign: 'left'
               }}>Execution History</h4>
             </div>
-            {activeFilterCount > 0 && (
-              <div className="flex items-center gap-2 flex-shrink-0">
-                <Badge variant="secondary" className="text-xs">
-                  {activeFilterCount} filter{activeFilterCount > 1 ? 's' : ''} active
-                </Badge>
-                <Button
-                  variant="ghost"
-                  size="sm"
-                  onClick={clearAllFilters}
-                  className="h-7 text-xs"
-                >
-                  <X className="h-3 w-3 mr-1" />
-                  Clear All
-                </Button>
-              </div>
-            )}
+            <div className="flex items-center gap-2 flex-shrink-0">
+              <label className="flex items-center gap-2 cursor-pointer">
+                <span className="text-sm text-muted-foreground">Show only work done</span>
+                <input
+                  type="checkbox"
+                  checked={!showNoAction}
+                  onChange={(e) => setShowNoAction(!e.target.checked)}
+                  className="h-4 w-4 rounded border-gray-300 text-primary focus:ring-2 focus:ring-primary cursor-pointer"
+                />
+              </label>
+              {activeFilterCount > 0 && (
+                <>
+                  <Badge variant="secondary" className="text-xs">
+                    {activeFilterCount} filter{activeFilterCount > 1 ? 's' : ''} active
+                  </Badge>
+                  <Button
+                    variant="ghost"
+                    size="sm"
+                    onClick={clearAllFilters}
+                    className="h-7 text-xs"
+                  >
+                    <X className="h-3 w-3 mr-1" />
+                    Clear All
+                  </Button>
+                </>
+              )}
+            </div>
           </div>
           <div className="mt-4">
             <ExecutionFilters
@@ -241,8 +256,6 @@ export default function ExecutionHistoryTable({ clientId }: ExecutionHistoryTabl
               workflowOptions={workflowOptions}
               daysFilter={daysFilter}
               onDaysChange={setDaysFilter}
-              showNoAction={showNoAction}
-              onShowNoActionChange={setShowNoAction}
             />
           </div>
         </CardHeader>
@@ -331,22 +344,10 @@ export default function ExecutionHistoryTable({ clientId }: ExecutionHistoryTabl
                                     <TooltipTrigger asChild>
                                       <span style={{ cursor: 'help' }}>{truncated}...</span>
                                     </TooltipTrigger>
-                                    <TooltipContent 
-                                      side="top" 
-                                      style={{ 
-                                        maxWidth: '400px', 
-                                        fontSize: '13px',
-                                        backgroundColor: '#2D3748',
-                                        color: '#FFFFFF',
-                                        padding: '12px 16px',
-                                        lineHeight: '1.6',
-                                        borderRadius: '8px',
-                                        border: 'none',
-                                        whiteSpace: 'pre-wrap',
-                                        wordBreak: 'break-word'
-                                      }}
-                                    >
-                                      {detailsStr}
+                                    <TooltipContent side="top">
+                                      <p style={{ maxWidth: '400px', fontSize: '12px', lineHeight: 1.5 }}>
+                                        {detailsStr}
+                                      </p>
                                     </TooltipContent>
                                   </Tooltip>
                                 )
@@ -364,9 +365,9 @@ export default function ExecutionHistoryTable({ clientId }: ExecutionHistoryTabl
               
               <div className="flex flex-col sm:flex-row items-center justify-between gap-4 mt-6 pt-4 border-t">
                   <div className="text-sm text-muted-foreground text-center sm:text-left">
-                    {statusFilter !== 'all' || workflowFilter !== 'all' || daysFilter !== 1
-                      ? `Showing ${paginatedData.length} of ${totalCount} executions (filtered)`
-                      : `Showing ${((currentPage - 1) * ITEMS_PER_PAGE) + 1}-${Math.min(currentPage * ITEMS_PER_PAGE, totalCount)} of ${totalCount} executions`
+                    {statusFilter !== 'all' || workflowFilter !== 'all' || daysFilter !== 1 || !showNoAction
+                      ? `Showing ${paginatedData.length} of ${filteredCount} executions (filtered)`
+                      : `Showing ${((currentPage - 1) * ITEMS_PER_PAGE) + 1}-${Math.min(currentPage * ITEMS_PER_PAGE, filteredCount)} of ${filteredCount} executions`
                     }
                   </div>
                   <div className="flex items-center gap-2">

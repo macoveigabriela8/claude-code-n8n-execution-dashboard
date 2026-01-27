@@ -137,8 +137,6 @@ export default function RecentExecutions({ clientId }: RecentExecutionsProps) {
               workflowOptions={workflowOptions}
               daysFilter={daysFilter}
               onDaysChange={setDaysFilter}
-              showNoAction={showNoAction}
-              onShowNoActionChange={setShowNoAction}
             />
           </div>
         </CardHeader>
