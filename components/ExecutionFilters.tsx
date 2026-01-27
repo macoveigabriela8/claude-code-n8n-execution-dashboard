@@ -76,7 +76,7 @@ export default function ExecutionFilters({
   }, [workflowOptions])
 
   return (
-    <div className="flex flex-col sm:flex-row sm:items-center gap-4">
+    <div className="flex flex-wrap items-center gap-4">
       <div className="flex gap-2 flex-wrap">
         {statusOptions.map((option) => (
           <button
@@ -123,14 +123,14 @@ export default function ExecutionFilters({
           ))}
         </SelectContent>
       </Select>
-      <div className="flex gap-2">
+      <div className="flex gap-2 flex-shrink-0">
         <button
           onClick={() => onShowNoActionChange(!showNoAction)}
           className="transition-opacity"
         >
           <Badge
             variant={!showNoAction ? 'default' : 'outline'}
-            className="cursor-pointer hover:opacity-80 text-sm"
+            className="cursor-pointer hover:opacity-80 text-sm whitespace-nowrap"
           >
             Work Done
           </Badge>
@@ -141,7 +141,7 @@ export default function ExecutionFilters({
         >
           <Badge
             variant={showNoAction ? 'default' : 'outline'}
-            className="cursor-pointer hover:opacity-80 text-sm"
+            className="cursor-pointer hover:opacity-80 text-sm whitespace-nowrap"
           >
             Show All
           </Badge>
