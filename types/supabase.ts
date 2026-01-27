@@ -25,6 +25,7 @@ export interface RecentExecution {
   started_at?: string
   stopped_at?: string
   duration_ms?: number
+  details?: string | any
   [key: string]: any
 }
 

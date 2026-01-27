@@ -269,6 +269,7 @@ export default function ExecutionHistoryTable({ clientId }: ExecutionHistoryTabl
                       <th style={{ padding: '14px', textAlign: 'left', color: Colors.dashboard.text.primary.rgb, fontWeight: 600, fontSize: '14px', lineHeight: 1.6, borderBottom: `1px solid ${Colors.dashboard.borders.lighter.rgb}` }}>Duration</th>
                       <th style={{ padding: '14px', textAlign: 'left', color: Colors.dashboard.text.primary.rgb, fontWeight: 600, fontSize: '14px', lineHeight: 1.6, borderBottom: `1px solid ${Colors.dashboard.borders.lighter.rgb}` }}>Status</th>
                       <th style={{ padding: '14px', textAlign: 'left', color: Colors.dashboard.text.primary.rgb, fontWeight: 600, fontSize: '14px', lineHeight: 1.6, borderBottom: `1px solid ${Colors.dashboard.borders.lighter.rgb}` }}>Timestamp</th>
+                      <th style={{ padding: '14px', textAlign: 'left', color: Colors.dashboard.text.primary.rgb, fontWeight: 600, fontSize: '14px', lineHeight: 1.6, borderBottom: `1px solid ${Colors.dashboard.borders.lighter.rgb}` }}>Details</th>
                     </tr>
                   </thead>
                   <tbody>
@@ -300,6 +301,14 @@ export default function ExecutionHistoryTable({ clientId }: ExecutionHistoryTabl
                           </td>
                           <td style={{ padding: '14px', color: Colors.dashboard.text.primary.rgb, fontSize: '14px', lineHeight: 1.6, fontWeight: 500 }}>
                             {formatDateTime(execution.started_at)}
+                          </td>
+                          <td style={{ padding: '14px', color: Colors.dashboard.text.primary.rgb, fontSize: '14px', lineHeight: 1.6, fontWeight: 500 }}>
+                            {(() => {
+                              const details = execution.details
+                              if (!details) return '-'
+                              const detailsStr = typeof details === 'string' ? details : JSON.stringify(details)
+                              return detailsStr.length > 100 ? `${detailsStr.substring(0, 100)}...` : detailsStr
+                            })()}
                           </td>
                         </tr>
                       )
