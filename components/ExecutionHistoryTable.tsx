@@ -38,7 +38,12 @@ export default function ExecutionHistoryTable({ clientId }: ExecutionHistoryTabl
   const prevDaysFilterRef = useRef(daysFilter)
   const prevWorkflowFilterRef = useRef(workflowFilter)
 
-  // Fetch data with server-side pagination
+  // Reset page when showOnlyWorkDone changes
+  useEffect(() => {
+    setCurrentPage(1)
+  }, [showOnlyWorkDone])
+
+  // Fetch data from server
   useEffect(() => {
     // Reset to page 1 if filters changed (but not if just page changed)
     const filtersChanged = prevStatusFilterRef.current !== statusFilter || 
@@ -59,13 +64,9 @@ export default function ExecutionHistoryTable({ clientId }: ExecutionHistoryTabl
         setLoading(true)
         setError(null) // Clear any previous errors at the start of fetch
         
-        // Calculate offset and limit for the page to use
-        const offset = (pageToUse - 1) * ITEMS_PER_PAGE
-        const limit = ITEMS_PER_PAGE
-        
-        const filters: { status?: string; limit?: number; days?: number; offset?: number; workflowName?: string } = { 
-          limit: limit,
-          offset: offset,
+        // Get ALL data (no pagination on server) so we can filter client-side
+        const filters: { status?: string; limit?: number; days?: number; workflowName?: string } = { 
+          limit: 10000, // Get all data
           days: daysFilter // Add days filter (default: 1 for 24 hours)
         }
         if (statusFilter !== 'all') {
@@ -175,7 +176,11 @@ export default function ExecutionHistoryTable({ clientId }: ExecutionHistoryTabl
 
   // Use filtered count for display and pagination
   const filteredCount = filteredData.length
-  const paginatedData = filteredData
+  
+  // Client-side pagination: slice the filtered data
+  const startIndex = (currentPage - 1) * ITEMS_PER_PAGE
+  const endIndex = startIndex + ITEMS_PER_PAGE
+  const paginatedData = filteredData.slice(startIndex, endIndex)
   
   // Pagination - use filtered count
   const totalPages = Math.ceil(filteredCount / ITEMS_PER_PAGE)
@@ -356,9 +361,9 @@ export default function ExecutionHistoryTable({ clientId }: ExecutionHistoryTabl
               
               <div className="flex flex-col sm:flex-row items-center justify-between gap-4 mt-6 pt-4 border-t">
                   <div className="text-sm text-muted-foreground text-center sm:text-left">
-                    {statusFilter !== 'all' || workflowFilter !== 'all' || daysFilter !== 1 || showOnlyWorkDone
-                      ? `Showing ${paginatedData.length} of ${filteredCount} executions (filtered)`
-                      : `Showing ${((currentPage - 1) * ITEMS_PER_PAGE) + 1}-${Math.min(currentPage * ITEMS_PER_PAGE, filteredCount)} of ${filteredCount} executions`
+                    {filteredCount > 0 
+                      ? `Showing ${((currentPage - 1) * ITEMS_PER_PAGE) + 1}-${Math.min(currentPage * ITEMS_PER_PAGE, filteredCount)} of ${filteredCount} executions`
+                      : 'No executions found'
                     }
                   </div>
                   <div className="flex items-center gap-2">
