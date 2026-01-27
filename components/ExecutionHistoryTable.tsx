@@ -280,11 +280,11 @@ export default function ExecutionHistoryTable({ clientId }: ExecutionHistoryTabl
                   <thead style={{ position: 'sticky', top: 0, zIndex: 10 }}>
                     <tr style={{ backgroundColor: '#F5F5F5' }}>
                       <th style={{ padding: '14px', textAlign: 'left', color: Colors.dashboard.text.primary.rgb, fontWeight: 600, fontSize: '14px', lineHeight: 1.6, borderBottom: `1px solid ${Colors.dashboard.borders.lighter.rgb}` }}>Execution ID</th>
-                      <th style={{ padding: '14px', textAlign: 'left', color: Colors.dashboard.text.primary.rgb, fontWeight: 600, fontSize: '14px', lineHeight: 1.6, borderBottom: `1px solid ${Colors.dashboard.borders.lighter.rgb}` }}>Workflow</th>
+                      <th style={{ padding: '14px', textAlign: 'left', color: Colors.dashboard.text.primary.rgb, fontWeight: 600, fontSize: '14px', lineHeight: 1.6, borderBottom: `1px solid ${Colors.dashboard.borders.lighter.rgb}`, width: '25%' }}>Workflow</th>
                       <th style={{ padding: '14px', textAlign: 'left', color: Colors.dashboard.text.primary.rgb, fontWeight: 600, fontSize: '14px', lineHeight: 1.6, borderBottom: `1px solid ${Colors.dashboard.borders.lighter.rgb}` }}>Duration</th>
                       <th style={{ padding: '14px', textAlign: 'left', color: Colors.dashboard.text.primary.rgb, fontWeight: 600, fontSize: '14px', lineHeight: 1.6, borderBottom: `1px solid ${Colors.dashboard.borders.lighter.rgb}` }}>Status</th>
                       <th style={{ padding: '14px', textAlign: 'left', color: Colors.dashboard.text.primary.rgb, fontWeight: 600, fontSize: '14px', lineHeight: 1.6, borderBottom: `1px solid ${Colors.dashboard.borders.lighter.rgb}` }}>Timestamp</th>
-                      <th style={{ padding: '14px', textAlign: 'left', color: Colors.dashboard.text.primary.rgb, fontWeight: 600, fontSize: '14px', lineHeight: 1.6, borderBottom: `1px solid ${Colors.dashboard.borders.lighter.rgb}` }}>Details</th>
+                      <th style={{ padding: '14px', textAlign: 'left', color: Colors.dashboard.text.primary.rgb, fontWeight: 600, fontSize: '14px', lineHeight: 1.6, borderBottom: `1px solid ${Colors.dashboard.borders.lighter.rgb}`, width: '20%' }}>Details</th>
                     </tr>
                   </thead>
                   <tbody>
@@ -303,7 +303,7 @@ export default function ExecutionHistoryTable({ clientId }: ExecutionHistoryTabl
                           <td style={{ padding: '14px', fontSize: '14px', lineHeight: 1.6, fontWeight: 500, color: Colors.dashboard.text.primary.rgb }}>
                             {execution.execution_id || '-'}
                           </td>
-                          <td style={{ padding: '14px', fontSize: '14px', lineHeight: 1.6, fontWeight: 500 }}>
+                          <td style={{ padding: '14px', fontSize: '14px', lineHeight: 1.6, fontWeight: 500, width: '25%' }}>
                             <span className="truncate block" style={{ color: Colors.dashboard.text.primary.rgb }}>
                               {workflowName}
                             </span>
@@ -317,7 +317,7 @@ export default function ExecutionHistoryTable({ clientId }: ExecutionHistoryTabl
                           <td style={{ padding: '14px', color: Colors.dashboard.text.primary.rgb, fontSize: '14px', lineHeight: 1.6, fontWeight: 500 }}>
                             {formatDateTime(execution.started_at)}
                           </td>
-                          <td style={{ padding: '14px', color: Colors.dashboard.text.primary.rgb, fontSize: '14px', lineHeight: 1.6, fontWeight: 500 }}>
+                          <td style={{ padding: '14px', color: Colors.dashboard.text.primary.rgb, fontSize: '14px', lineHeight: 1.6, fontWeight: 500, width: '20%', maxWidth: '300px' }}>
                             {(() => {
                               const details = execution.details
                               if (!details) return '-'
@@ -331,7 +331,21 @@ export default function ExecutionHistoryTable({ clientId }: ExecutionHistoryTabl
                                     <TooltipTrigger asChild>
                                       <span style={{ cursor: 'help' }}>{truncated}...</span>
                                     </TooltipTrigger>
-                                    <TooltipContent side="top" style={{ maxWidth: '400px', fontSize: '12px' }}>
+                                    <TooltipContent 
+                                      side="top" 
+                                      style={{ 
+                                        maxWidth: '400px', 
+                                        fontSize: '13px',
+                                        backgroundColor: '#2D3748',
+                                        color: '#FFFFFF',
+                                        padding: '12px 16px',
+                                        lineHeight: '1.6',
+                                        borderRadius: '8px',
+                                        border: 'none',
+                                        whiteSpace: 'pre-wrap',
+                                        wordBreak: 'break-word'
+                                      }}
+                                    >
                                       {detailsStr}
                                     </TooltipContent>
                                   </Tooltip>
