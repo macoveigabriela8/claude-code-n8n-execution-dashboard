@@ -31,6 +31,7 @@ export default function ExecutionHistoryTable({ clientId }: ExecutionHistoryTabl
   const [workflowFilter, setWorkflowFilter] = useState<string>('all')
   const [daysFilter, setDaysFilter] = useState<number>(1) // Default: Last 24 hours
   const [currentPage, setCurrentPage] = useState(1)
+  const [showNoAction, setShowNoAction] = useState<boolean>(false) // Default: hide "No action" executions
   
   // Use refs to track previous filter values to detect changes
   const prevStatusFilterRef = useRef(statusFilter)
@@ -159,19 +160,29 @@ export default function ExecutionHistoryTable({ clientId }: ExecutionHistoryTabl
     fetchWorkflowNames()
   }, [clientId, daysFilter])
 
-  // No client-side filtering needed - all filtering is done server-side
+  // Client-side filtering for Details column (action vs no action)
   // Ensure data is always an array
-  const paginatedData = Array.isArray(data) ? data : []
+  let paginatedData = Array.isArray(data) ? data : []
+  
+  // Filter out "No action" executions if showNoAction is false
+  if (!showNoAction) {
+    paginatedData = paginatedData.filter(execution => {
+      if (!execution.details) return true // Keep executions with no details
+      const detailsStr = typeof execution.details === 'string' ? execution.details : JSON.stringify(execution.details)
+      return !detailsStr.toLowerCase().startsWith('no')
+    })
+  }
 
   // Pagination - use server-side count
   const totalPages = Math.ceil(totalCount / ITEMS_PER_PAGE)
 
-  const activeFilterCount = (statusFilter !== 'all' ? 1 : 0) + (workflowFilter !== 'all' ? 1 : 0) + (daysFilter !== 1 ? 1 : 0)
+  const activeFilterCount = (statusFilter !== 'all' ? 1 : 0) + (workflowFilter !== 'all' ? 1 : 0) + (daysFilter !== 1 ? 1 : 0) + (!showNoAction ? 1 : 0)
 
   const clearAllFilters = () => {
     setStatusFilter('all')
     setWorkflowFilter('all')
     setDaysFilter(1) // Reset to default: Last 24 hours
+    setShowNoAction(false) // Reset to default: hide "No action"
   }
 
   return (
@@ -230,6 +241,8 @@ export default function ExecutionHistoryTable({ clientId }: ExecutionHistoryTabl
               workflowOptions={workflowOptions}
               daysFilter={daysFilter}
               onDaysChange={setDaysFilter}
+              showNoAction={showNoAction}
+              onShowNoActionChange={setShowNoAction}
             />
           </div>
         </CardHeader>

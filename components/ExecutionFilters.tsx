@@ -19,6 +19,8 @@ interface ExecutionFiltersProps {
   workflowOptions: string[]
   daysFilter: number
   onDaysChange: (days: number) => void
+  showNoAction: boolean
+  onShowNoActionChange: (show: boolean) => void
 }
 
 export default function ExecutionFilters({
@@ -29,6 +31,8 @@ export default function ExecutionFilters({
   workflowOptions,
   daysFilter,
   onDaysChange,
+  showNoAction,
+  onShowNoActionChange,
 }: ExecutionFiltersProps) {
   const statusOptions = [
     { value: 'all', label: 'All' },
@@ -119,6 +123,30 @@ export default function ExecutionFilters({
           ))}
         </SelectContent>
       </Select>
+      <div className="flex gap-2">
+        <button
+          onClick={() => onShowNoActionChange(!showNoAction)}
+          className="transition-opacity"
+        >
+          <Badge
+            variant={!showNoAction ? 'default' : 'outline'}
+            className="cursor-pointer hover:opacity-80 text-sm"
+          >
+            Action Taken
+          </Badge>
+        </button>
+        <button
+          onClick={() => onShowNoActionChange(!showNoAction)}
+          className="transition-opacity"
+        >
+          <Badge
+            variant={showNoAction ? 'default' : 'outline'}
+            className="cursor-pointer hover:opacity-80 text-sm"
+          >
+            Show All
+          </Badge>
+        </button>
+      </div>
     </div>
   )
 }
