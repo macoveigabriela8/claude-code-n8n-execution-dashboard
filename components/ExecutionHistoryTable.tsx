@@ -13,6 +13,7 @@ import { formatDateTime, formatDuration, getDurationColor } from '@/lib/utils'
 import ExecutionFilters from './ExecutionFilters'
 import { Activity, X, ChevronsLeft, ChevronLeft, ChevronRight, ChevronsRight } from 'lucide-react'
 import { Colors } from '@/lib/design-tokens'
+import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/components/ui/tooltip'
 
 interface ExecutionHistoryTableProps {
   clientId: string
@@ -260,8 +261,9 @@ export default function ExecutionHistoryTable({ clientId }: ExecutionHistoryTabl
             </div>
           ) : (
             <>
-              <div className="overflow-auto" style={{ maxHeight: '600px' }}>
-                <table className="w-full" style={{ borderCollapse: 'collapse' }}>
+              <TooltipProvider delayDuration={200}>
+                <div className="overflow-auto" style={{ maxHeight: '600px' }}>
+                  <table className="w-full" style={{ borderCollapse: 'collapse' }}>
                   <thead style={{ position: 'sticky', top: 0, zIndex: 10 }}>
                     <tr style={{ backgroundColor: '#F5F5F5' }}>
                       <th style={{ padding: '14px', textAlign: 'left', color: Colors.dashboard.text.primary.rgb, fontWeight: 600, fontSize: '14px', lineHeight: 1.6, borderBottom: `1px solid ${Colors.dashboard.borders.lighter.rgb}` }}>Execution ID</th>
@@ -307,7 +309,22 @@ export default function ExecutionHistoryTable({ clientId }: ExecutionHistoryTabl
                               const details = execution.details
                               if (!details) return '-'
                               const detailsStr = typeof details === 'string' ? details : JSON.stringify(details)
-                              return detailsStr.length > 100 ? `${detailsStr.substring(0, 100)}...` : detailsStr
+                              const truncated = detailsStr.substring(0, 100)
+                              const isTruncated = detailsStr.length > 100
+                              
+                              if (isTruncated) {
+                                return (
+                                  <Tooltip>
+                                    <TooltipTrigger asChild>
+                                      <span style={{ cursor: 'help' }}>{truncated}...</span>
+                                    </TooltipTrigger>
+                                    <TooltipContent side="top" style={{ maxWidth: '400px', fontSize: '12px' }}>
+                                      {detailsStr}
+                                    </TooltipContent>
+                                  </Tooltip>
+                                )
+                              }
+                              return detailsStr
                             })()}
                           </td>
                         </tr>
@@ -316,6 +333,7 @@ export default function ExecutionHistoryTable({ clientId }: ExecutionHistoryTabl
                   </tbody>
                 </table>
               </div>
+              </TooltipProvider>
               
               <div className="flex flex-col sm:flex-row items-center justify-between gap-4 mt-6 pt-4 border-t">
                   <div className="text-sm text-muted-foreground text-center sm:text-left">
