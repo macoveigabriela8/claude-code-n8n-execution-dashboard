@@ -198,7 +198,7 @@ export default function ExecutionHistoryTable({ clientId }: ExecutionHistoryTabl
   // Pagination - use filtered count
   const totalPages = Math.ceil(filteredCount / ITEMS_PER_PAGE)
 
-  const activeFilterCount = (statusFilter !== 'all' ? 1 : 0) + (workflowFilter !== 'all' ? 1 : 0) + (daysFilter !== 1 ? 1 : 0) + (showOnlyWorkDone ? 1 : 0)
+  const activeFilterCount = (statusFilter !== 'all' ? 1 : 0) + (workflowFilter !== 'all' ? 1 : 0) + (daysFilter !== 1 ? 1 : 0) + (!showOnlyWorkDone ? 1 : 0)
 
   const clearAllFilters = () => {
     setStatusFilter('all')

@@ -93,7 +93,7 @@ export default function RecentExecutions({ clientId }: RecentExecutionsProps) {
   const endIndex = startIndex + ITEMS_PER_PAGE
   const paginatedData = filteredData.slice(startIndex, endIndex)
 
-  const activeFilterCount = (statusFilter !== 'all' ? 1 : 0) + (workflowFilter !== 'all' ? 1 : 0) + (showOnlyWorkDone ? 1 : 0)
+  const activeFilterCount = (statusFilter !== 'all' ? 1 : 0) + (workflowFilter !== 'all' ? 1 : 0) + (!showOnlyWorkDone ? 1 : 0)
 
   const clearAllFilters = () => {
     setStatusFilter('all')
