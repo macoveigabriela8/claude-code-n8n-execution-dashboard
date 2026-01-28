@@ -30,7 +30,7 @@ export default function RecentExecutions({ clientId }: RecentExecutionsProps) {
   const [data, setData] = useState<RecentExecution[]>([])
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState<string | null>(null)
-  const [statusFilter, setStatusFilter] = useState<string>('all')
+  const [statusFilter, setStatusFilter] = useState<string>('success')
   const [workflowFilter, setWorkflowFilter] = useState<string>('all')
   const [daysFilter, setDaysFilter] = useState<number>(1)
   const [currentPage, setCurrentPage] = useState(1)
@@ -103,7 +103,7 @@ export default function RecentExecutions({ clientId }: RecentExecutionsProps) {
   const activeFilterCount = (statusFilter !== 'all' ? 1 : 0) + (workflowFilter !== 'all' ? 1 : 0) + (!showOnlyWorkDone ? 1 : 0)
 
   const clearAllFilters = () => {
-    setStatusFilter('all')
+    setStatusFilter('success') // Reset to default: Success only
     setWorkflowFilter('all')
     setShowOnlyWorkDone(true)
   }

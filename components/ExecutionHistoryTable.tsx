@@ -27,7 +27,7 @@ export default function ExecutionHistoryTable({ clientId }: ExecutionHistoryTabl
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState<string | null>(null)
   const [isCardHovered, setIsCardHovered] = useState(false)
-  const [statusFilter, setStatusFilter] = useState<string>('all')
+  const [statusFilter, setStatusFilter] = useState<string>('success')
   const [workflowFilter, setWorkflowFilter] = useState<string>('all')
   const [daysFilter, setDaysFilter] = useState<number>(1) // Default: Last 24 hours
   const [currentPage, setCurrentPage] = useState(1)
@@ -208,7 +208,7 @@ export default function ExecutionHistoryTable({ clientId }: ExecutionHistoryTabl
   const activeFilterCount = (statusFilter !== 'all' ? 1 : 0) + (workflowFilter !== 'all' ? 1 : 0) + (daysFilter !== 1 ? 1 : 0) + (!showOnlyWorkDone ? 1 : 0)
 
   const clearAllFilters = () => {
-    setStatusFilter('all')
+    setStatusFilter('success') // Reset to default: Success only
     setWorkflowFilter('all')
     setDaysFilter(1) // Reset to default: Last 24 hours
     setShowOnlyWorkDone(true) // Reset to default: show only work done
