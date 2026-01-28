@@ -306,13 +306,14 @@ export default function ExecutionHistoryTable({ clientId }: ExecutionHistoryTabl
                           key={execution.execution_id || execution.workflow_id || execution.workflow_name || `execution-${index}`}
                           style={{ 
                             backgroundColor: isOddRow ? '#F5F5F5' : '#FFFFFF',
-                            borderBottom: index < paginatedData.length - 1 ? `1px solid ${Colors.dashboard.borders.lighter.rgb}` : 'none' 
+                            borderBottom: index < paginatedData.length - 1 ? `1px solid ${Colors.dashboard.borders.lighter.rgb}` : 'none',
+                            height: '52px'
                           }}
                         >
                           <td style={{ padding: '14px', fontSize: '14px', lineHeight: 1.6, fontWeight: 500, color: Colors.dashboard.text.primary.rgb }}>
                             {execution.execution_id || '-'}
                           </td>
-                          <td style={{ padding: '14px', fontSize: '14px', lineHeight: 1.6, fontWeight: 500, width: '25%' }}>
+                          <td style={{ padding: '14px', fontSize: '14px', lineHeight: 1.6, fontWeight: 500, width: '25%', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
                             <span className="truncate block" style={{ color: Colors.dashboard.text.primary.rgb }}>
                               {workflowName}
                             </span>
@@ -326,29 +327,37 @@ export default function ExecutionHistoryTable({ clientId }: ExecutionHistoryTabl
                           <td style={{ padding: '14px', color: Colors.dashboard.text.primary.rgb, fontSize: '14px', lineHeight: 1.6, fontWeight: 500 }}>
                             {formatDateTime(execution.started_at)}
                           </td>
-                          <td style={{ padding: '14px', color: Colors.dashboard.text.primary.rgb, fontSize: '14px', lineHeight: 1.6, fontWeight: 500, width: '20%', maxWidth: '300px' }}>
+                          <td style={{ padding: '14px', color: Colors.dashboard.text.primary.rgb, fontSize: '14px', lineHeight: 1.6, fontWeight: 500, width: '20%', maxWidth: '300px', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
                             {(() => {
                               const details = execution.details
                               if (!details) return '-'
                               const detailsStr = typeof details === 'string' ? details : JSON.stringify(details)
-                              const truncated = detailsStr.substring(0, 100)
-                              const isTruncated = detailsStr.length > 100
+                              const truncated = detailsStr.substring(0, 60)
+                              const isTruncated = detailsStr.length > 60
                               
                               if (isTruncated) {
                                 return (
                                   <Tooltip>
                                     <TooltipTrigger asChild>
-                                      <span style={{ cursor: 'help' }}>{truncated}...</span>
+                                      <span style={{ cursor: 'help', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap', display: 'block' }}>{truncated}...</span>
                                     </TooltipTrigger>
-                                    <TooltipContent side="top">
-                                      <p style={{ maxWidth: '400px', fontSize: '12px', lineHeight: 1.5 }}>
-                                        {detailsStr}
-                                      </p>
+                                    <TooltipContent 
+                                      side="top"
+                                      className="bg-[#2D3748] text-white border-none"
+                                      style={{ 
+                                        maxWidth: '400px', 
+                                        fontSize: '12px', 
+                                        lineHeight: 1.5,
+                                        padding: '8px 12px',
+                                        borderRadius: '6px'
+                                      }}
+                                    >
+                                      {detailsStr}
                                     </TooltipContent>
                                   </Tooltip>
                                 )
                               }
-                              return detailsStr
+                              return <span style={{ overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap', display: 'block' }}>{detailsStr}</span>
                             })()}
                           </td>
                         </tr>
