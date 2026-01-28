@@ -125,13 +125,13 @@ export default function ExecutionFilters({
           </SelectContent>
         </Select>
       </div>
-      <div className="flex items-center gap-3 flex-shrink-0">
-        <span className="text-sm font-medium" style={{ color: '#1e293b' }}>Work Done</span>
+      <div className="flex items-center gap-2 flex-shrink-0">
+        <span className="text-sm" style={{ color: '#64748b' }}>Work Done</span>
         <button
           onClick={() => onShowOnlyWorkDoneChange(!showOnlyWorkDone)}
-          className="relative inline-flex h-6 w-11 items-center rounded-full transition-colors focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary"
+          className="relative inline-flex h-6 w-11 items-center rounded-full transition-colors focus:outline-none focus:ring-2 focus:ring-offset-2"
           style={{ 
-            backgroundColor: showOnlyWorkDone ? '#1e293b' : '#cbd5e1'
+            backgroundColor: showOnlyWorkDone ? '#1E2E52' : '#cbd5e1'
           }}
           aria-pressed={showOnlyWorkDone}
         >
