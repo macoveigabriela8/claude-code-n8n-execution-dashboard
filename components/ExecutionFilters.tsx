@@ -126,7 +126,7 @@ export default function ExecutionFilters({
         </Select>
       </div>
       <div className="flex items-center gap-2 flex-shrink-0">
-        <span className="text-sm" style={{ color: '#64748b' }}>Work Done</span>
+        <span className="text-sm font-medium" style={{ color: '#1E2E52' }}>Work Done</span>
         <button
           onClick={() => onShowOnlyWorkDoneChange(!showOnlyWorkDone)}
           className="relative inline-flex h-6 w-11 items-center rounded-full transition-colors focus:outline-none focus:ring-2 focus:ring-offset-2"

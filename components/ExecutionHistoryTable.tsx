@@ -181,7 +181,7 @@ export default function ExecutionHistoryTable({ clientId }: ExecutionHistoryTabl
   // Filter out "No action" executions if showing only work done
   if (showOnlyWorkDone) {
     filteredData = filteredData.filter(execution => {
-      if (!execution.details) return true // Keep executions with no details
+      if (!execution.details) return false // Exclude executions with no details - no details = no work done
       const detailsStr = typeof execution.details === 'string' ? execution.details : JSON.stringify(execution.details)
       return !detailsStr.toLowerCase().startsWith('no')
     })
@@ -356,13 +356,17 @@ export default function ExecutionHistoryTable({ clientId }: ExecutionHistoryTabl
                                     </TooltipTrigger>
                                     <TooltipContent 
                                       side="top"
+                                      align="start"
                                       className="bg-[#2D3748] text-white border-none"
                                       style={{ 
-                                        maxWidth: '400px', 
-                                        fontSize: '12px', 
-                                        lineHeight: 1.5,
-                                        padding: '8px 12px',
-                                        borderRadius: '6px'
+                                        maxWidth: '600px', 
+                                        fontSize: '13px', 
+                                        lineHeight: 1.6,
+                                        padding: '10px 14px',
+                                        borderRadius: '6px',
+                                        whiteSpace: 'normal',
+                                        wordBreak: 'break-word',
+                                        zIndex: 9999
                                       }}
                                     >
                                       {detailsStr}

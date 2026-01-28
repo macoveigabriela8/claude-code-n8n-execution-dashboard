@@ -78,11 +78,10 @@ export default function RecentExecutions({ clientId }: RecentExecutionsProps) {
     }
     // Filter out "No action" executions if showing only work done
     if (showOnlyWorkDone) {
-      if (execution.details) {
-        const detailsStr = typeof execution.details === 'string' ? execution.details : JSON.stringify(execution.details)
-        if (detailsStr.toLowerCase().startsWith('no')) {
-          return false
-        }
+      if (!execution.details) return false // Exclude executions with no details - no details = no work done
+      const detailsStr = typeof execution.details === 'string' ? execution.details : JSON.stringify(execution.details)
+      if (detailsStr.toLowerCase().startsWith('no')) {
+        return false
       }
     }
     return true
