@@ -1,0 +1,117 @@
+{
+  "name": "Success Rate Alert - Below 95%",
+  "nodes": [
+    {
+      "id": "schedule-trigger",
+      "name": "Every 30 Minutes",
+      "type": "n8n-nodes-base.scheduleTrigger",
+      "typeVersion": 1.2,
+      "position": [250, 300],
+      "parameters": {
+        "rule": {
+          "interval": [
+            {
+              "field": "minutes",
+              "minutesInterval": 30
+            }
+          ]
+        }
+      }
+    },
+    {
+      "id": "supabase-query",
+      "name": "Check Success Rate",
+      "type": "n8n-nodes-base.supabase",
+      "typeVersion": 1,
+      "position": [450, 300],
+      "parameters": {
+        "operation": "getAll",
+        "tableId": "vw_client_summary",
+        "returnAll": false,
+        "options": {}
+      }
+    },
+    {
+      "id": "if-below-95",
+      "name": "Success Rate Below 95",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2,
+      "position": [650, 300],
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "loose"
+          },
+          "conditions": [
+            {
+              "id": "condition1",
+              "leftValue": "={{ $json.success_rate_24h }}",
+              "rightValue": "95",
+              "operator": {
+                "type": "number",
+                "operation": "smaller"
+              }
+            }
+          ],
+          "combinator": "and"
+        }
+      }
+    },
+    {
+      "id": "gmail-send",
+      "name": "Send Alert Email",
+      "type": "n8n-nodes-base.gmail",
+      "typeVersion": 2.1,
+      "position": [850, 250],
+      "parameters": {
+        "operation": "send",
+        "sendTo": "your-email@example.com",
+        "subject": "⚠️ Alert: Success Rate Below 95% - {{ $('Check Success Rate').item.json.client_name }}",
+        "emailType": "html",
+        "message": "=<h2>⚠️ Success Rate Alert</h2>\n\n<p><strong>Client:</strong> {{ $('Check Success Rate').item.json.client_name }}</p>\n<p><strong>Success Rate:</strong> {{ $('Check Success Rate').item.json.success_rate_24h }}%</p>\n<p><strong>Target:</strong> 95%</p>\n\n<h3>24-Hour Statistics:</h3>\n<ul>\n  <li><strong>Total Executions:</strong> {{ $('Check Success Rate').item.json.executions_24h }}</li>\n  <li><strong>Successful:</strong> {{ $('Check Success Rate').item.json.success_24h }}</li>\n  <li><strong>Failed:</strong> {{ $('Check Success Rate').item.json.errors_24h }}</li>\n</ul>\n\n<p><a href=\"https://your-dashboard-url.vercel.app/dashboard?clientId={{ $('Check Success Rate').item.json.client_id }}\">View Dashboard</a></p>\n\n<p style=\"color: #666; font-size: 12px;\">Sent: {{ $now.toLocaleString() }}</p>"
+      }
+    }
+  ],
+  "connections": {
+    "Every 30 Minutes": {
+      "main": [
+        [
+          {
+            "node": "Check Success Rate",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Check Success Rate": {
+      "main": [
+        [
+          {
+            "node": "Success Rate Below 95",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Success Rate Below 95": {
+      "main": [
+        [
+          {
+            "node": "Send Alert Email",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        []
+      ]
+    }
+  },
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "active": false
+}
