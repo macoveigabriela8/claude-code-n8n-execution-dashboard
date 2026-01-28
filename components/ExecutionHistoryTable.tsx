@@ -43,6 +43,13 @@ export default function ExecutionHistoryTable({ clientId }: ExecutionHistoryTabl
     setCurrentPage(1)
   }, [showOnlyWorkDone])
 
+  // Auto-disable "Work Done" when Error filter is selected
+  useEffect(() => {
+    if (statusFilter === 'error') {
+      setShowOnlyWorkDone(false)
+    }
+  }, [statusFilter])
+
   // Fetch data from server
   useEffect(() => {
     // Reset to page 1 if filters changed (but not if just page changed)
