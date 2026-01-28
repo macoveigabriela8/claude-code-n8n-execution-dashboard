@@ -126,14 +126,26 @@ export default function ExecutionFilters({
         </Select>
       </div>
       <div className="flex items-center gap-2 flex-shrink-0">
-        <span className="text-sm font-medium" style={{ color: '#1E2E52' }}>Work Done</span>
+        <span 
+          className="text-sm font-medium" 
+          style={{ 
+            color: statusFilter === 'error' ? '#94a3b8' : '#1E2E52',
+            opacity: statusFilter === 'error' ? 0.5 : 1
+          }}
+        >
+          Work Done
+        </span>
         <button
-          onClick={() => onShowOnlyWorkDoneChange(!showOnlyWorkDone)}
+          onClick={() => statusFilter !== 'error' && onShowOnlyWorkDoneChange(!showOnlyWorkDone)}
+          disabled={statusFilter === 'error'}
           className="relative inline-flex h-6 w-11 items-center rounded-full transition-colors focus:outline-none focus:ring-2 focus:ring-offset-2"
           style={{ 
-            backgroundColor: showOnlyWorkDone ? '#1E2E52' : '#cbd5e1'
+            backgroundColor: showOnlyWorkDone ? '#1E2E52' : '#cbd5e1',
+            opacity: statusFilter === 'error' ? 0.5 : 1,
+            cursor: statusFilter === 'error' ? 'not-allowed' : 'pointer'
           }}
           aria-pressed={showOnlyWorkDone}
+          aria-disabled={statusFilter === 'error'}
         >
           <span
             className={`inline-block h-4 w-4 transform rounded-full bg-white transition-transform ${
