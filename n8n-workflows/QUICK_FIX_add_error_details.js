@@ -25,19 +25,42 @@ for (const item of allExecs) {
     durationMs = Math.round(new Date(exec.stoppedAt) - new Date(exec.startedAt));
   }
   
-  // ========== NEW: Extract error message or details ==========
+  // ========== NEW: Extract DETAILED error message ==========
   let details = null;
   
   if (exec._status === 'error') {
-    // For errors, extract error message from execution data
+    // Extract comprehensive error details from n8n execution
+    const errorParts = [];
+    
+    // 1. Check main error object
     if (exec.data && exec.data.resultData && exec.data.resultData.error) {
       const error = exec.data.resultData.error;
-      details = error.message || error.description || 'Error occurred';
-    } else if (exec.lastNodeExecuted) {
-      details = `Error in node: ${exec.lastNodeExecuted}`;
-    } else {
-      details = 'Execution failed';
+      if (error.message) errorParts.push(error.message);
+      if (error.description) errorParts.push(error.description);
+      if (error.cause && error.cause.message) errorParts.push(`Cause: ${error.cause.message}`);
     }
+    
+    // 2. Check last node that executed
+    if (exec.lastNodeExecuted) {
+      errorParts.push(`Failed at: ${exec.lastNodeExecuted}`);
+    }
+    
+    // 3. Check for node-specific errors in runData
+    if (exec.data && exec.data.resultData && exec.data.resultData.runData) {
+      const runData = exec.data.resultData.runData;
+      for (const nodeName in runData) {
+        const nodeData = runData[nodeName];
+        if (nodeData && nodeData[0] && nodeData[0].error) {
+          const nodeError = nodeData[0].error;
+          errorParts.push(`${nodeName}: ${nodeError.message || nodeError.description || 'Error'}`);
+        }
+      }
+    }
+    
+    // 4. Combine all error info or use fallback
+    details = errorParts.length > 0 
+      ? errorParts.join(' | ') 
+      : 'Execution failed - no error details available';
   }
   // For success, you'll add details from your existing Postgres nodes in each workflow
   // ========================================================
