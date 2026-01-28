@@ -25,42 +25,71 @@ for (const item of allExecs) {
     durationMs = Math.round(new Date(exec.stoppedAt) - new Date(exec.startedAt));
   }
   
-  // ========== NEW: Extract DETAILED error message ==========
+  // ========== NEW: Extract FULL ERROR DETAILS with Stack Trace ==========
   let details = null;
   
   if (exec._status === 'error') {
-    // Extract comprehensive error details from n8n execution
-    const errorParts = [];
+    // Build comprehensive error details object
+    const errorInfo = {
+      message: null,
+      stack: null,
+      node: null,
+      code: null,
+      type: null,
+      fullError: null
+    };
     
-    // 1. Check main error object
+    // 1. Get main error with stack trace
     if (exec.data && exec.data.resultData && exec.data.resultData.error) {
       const error = exec.data.resultData.error;
-      if (error.message) errorParts.push(error.message);
-      if (error.description) errorParts.push(error.description);
-      if (error.cause && error.cause.message) errorParts.push(`Cause: ${error.cause.message}`);
+      errorInfo.message = error.message || error.description;
+      errorInfo.stack = error.stack; // FULL STACK TRACE
+      errorInfo.code = error.code;
+      errorInfo.type = error.name || error.type;
+      errorInfo.fullError = JSON.stringify(error, null, 2); // Full error object
     }
     
-    // 2. Check last node that executed
+    // 2. Get failed node name
     if (exec.lastNodeExecuted) {
-      errorParts.push(`Failed at: ${exec.lastNodeExecuted}`);
+      errorInfo.node = exec.lastNodeExecuted;
     }
     
-    // 3. Check for node-specific errors in runData
+    // 3. Get node-specific error details
+    let nodeErrors = [];
     if (exec.data && exec.data.resultData && exec.data.resultData.runData) {
       const runData = exec.data.resultData.runData;
       for (const nodeName in runData) {
         const nodeData = runData[nodeName];
         if (nodeData && nodeData[0] && nodeData[0].error) {
           const nodeError = nodeData[0].error;
-          errorParts.push(`${nodeName}: ${nodeError.message || nodeError.description || 'Error'}`);
+          nodeErrors.push({
+            node: nodeName,
+            message: nodeError.message,
+            stack: nodeError.stack
+          });
         }
       }
     }
     
-    // 4. Combine all error info or use fallback
-    details = errorParts.length > 0 
-      ? errorParts.join(' | ') 
-      : 'Execution failed - no error details available';
+    // 4. Combine into detailed string
+    const parts = [];
+    if (errorInfo.message) parts.push(`ERROR: ${errorInfo.message}`);
+    if (errorInfo.node) parts.push(`NODE: ${errorInfo.node}`);
+    if (errorInfo.code) parts.push(`CODE: ${errorInfo.code}`);
+    if (errorInfo.type) parts.push(`TYPE: ${errorInfo.type}`);
+    if (errorInfo.stack) parts.push(`STACK: ${errorInfo.stack}`);
+    
+    // Add node-specific errors
+    if (nodeErrors.length > 0) {
+      nodeErrors.forEach(ne => {
+        parts.push(`${ne.node}: ${ne.message}`);
+        if (ne.stack) parts.push(`STACK: ${ne.stack}`);
+      });
+    }
+    
+    details = parts.length > 0 
+      ? parts.join(' || ')
+      : (errorInfo.fullError || 'Execution failed - no error details available');
   }
   // For success, you'll add details from your existing Postgres nodes in each workflow
   // ========================================================
