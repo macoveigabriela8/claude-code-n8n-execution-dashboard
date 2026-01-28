@@ -36,9 +36,9 @@ export default function RecentExecutions({ clientId }: RecentExecutionsProps) {
   const [currentPage, setCurrentPage] = useState(1)
   const [showOnlyWorkDone, setShowOnlyWorkDone] = useState<boolean>(true)
 
-  // Auto-disable "Work Done" when Error filter is selected
+  // Auto-disable "Work Done" when All or Error filter is selected
   useEffect(() => {
-    if (statusFilter === 'error') {
+    if (statusFilter === 'error' || statusFilter === 'all') {
       setShowOnlyWorkDone(false)
     }
   }, [statusFilter])
