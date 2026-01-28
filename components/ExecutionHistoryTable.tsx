@@ -355,11 +355,12 @@ export default function ExecutionHistoryTable({ clientId }: ExecutionHistoryTabl
                                       <span style={{ cursor: 'help', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap', display: 'block' }}>{truncated}...</span>
                                     </TooltipTrigger>
                                     <TooltipContent 
-                                      side="top"
-                                      align="start"
+                                      side="left"
+                                      align="center"
+                                      sideOffset={10}
                                       className="bg-[#2D3748] text-white border-none"
                                       style={{ 
-                                        maxWidth: '600px', 
+                                        maxWidth: '400px', 
                                         fontSize: '13px', 
                                         lineHeight: 1.6,
                                         padding: '10px 14px',
