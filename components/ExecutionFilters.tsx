@@ -125,28 +125,21 @@ export default function ExecutionFilters({
           </SelectContent>
         </Select>
       </div>
-      <div className="flex gap-2 flex-shrink-0">
+      <div className="flex items-center gap-3 flex-shrink-0">
+        <span className="text-sm font-medium" style={{ color: '#1e293b' }}>Work Done</span>
         <button
-          onClick={() => onShowOnlyWorkDoneChange(true)}
-          className="transition-opacity"
+          onClick={() => onShowOnlyWorkDoneChange(!showOnlyWorkDone)}
+          className="relative inline-flex h-6 w-11 items-center rounded-full transition-colors focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary"
+          style={{ 
+            backgroundColor: showOnlyWorkDone ? '#1e293b' : '#cbd5e1'
+          }}
+          aria-pressed={showOnlyWorkDone}
         >
-          <Badge
-            variant={showOnlyWorkDone ? 'default' : 'outline'}
-            className="cursor-pointer hover:opacity-80 text-sm whitespace-nowrap"
-          >
-            Work Done
-          </Badge>
-        </button>
-        <button
-          onClick={() => onShowOnlyWorkDoneChange(false)}
-          className="transition-opacity"
-        >
-          <Badge
-            variant={!showOnlyWorkDone ? 'default' : 'outline'}
-            className="cursor-pointer hover:opacity-80 text-sm whitespace-nowrap"
-          >
-            Show All
-          </Badge>
+          <span
+            className={`inline-block h-4 w-4 transform rounded-full bg-white transition-transform ${
+              showOnlyWorkDone ? 'translate-x-6' : 'translate-x-1'
+            }`}
+          />
         </button>
       </div>
     </div>

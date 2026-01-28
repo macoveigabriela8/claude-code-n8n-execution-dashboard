@@ -61,10 +61,9 @@ export async function getRecentExecutions(clientId: string, filters?: {
     const to = filters.offset + filters.limit - 1
     query = query.range(from, to)
   } else if (filters?.limit) {
-    // Simple limit (for backward compatibility)
-    // Supabase/PostgREST max limit is 1000 per request, so cap at 1000
-    // For higher limits, pagination should be used instead
-    query = query.limit(Math.min(filters.limit, 1000))
+    // Use range(0, limit-1) to bypass the 1000 row limit
+    // This allows fetching more than 1000 rows in a single request
+    query = query.range(0, filters.limit - 1)
   } else {
     // Default limit: if days filter is set, use max 1000; otherwise 100
     const defaultLimit = filters?.days ? 1000 : 100

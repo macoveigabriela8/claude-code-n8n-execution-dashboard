@@ -66,7 +66,7 @@ export default function ExecutionHistoryTable({ clientId }: ExecutionHistoryTabl
         
         // Get ALL data (no pagination on server) so we can filter client-side
         const filters: { status?: string; limit?: number; days?: number; workflowName?: string } = { 
-          limit: 10000, // Get all data
+          limit: 100000, // Get all data - increase limit to match all transactions
           days: daysFilter // Add days filter (default: 1 for 24 hours)
         }
         if (statusFilter !== 'all') {
