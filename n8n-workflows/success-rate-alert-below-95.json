@@ -48,7 +48,7 @@
             {
               "id": "condition1",
               "leftValue": "={{ $json.success_rate_24h }}",
-              "rightValue": "95",
+              "rightValue": 95,
               "operator": {
                 "type": "number",
                 "operation": "smaller"
