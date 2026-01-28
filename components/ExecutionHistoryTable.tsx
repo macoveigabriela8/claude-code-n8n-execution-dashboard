@@ -10,6 +10,7 @@ import { Button } from '@/components/ui/button'
 import { getRecentExecutions } from '@/lib/supabase'
 import { RecentExecution } from '@/types/supabase'
 import { formatDateTime, formatDuration, getDurationColor } from '@/lib/utils'
+import { getExecutionUrl } from '@/lib/config'
 import ExecutionFilters from './ExecutionFilters'
 import { Activity, X, ChevronsLeft, ChevronLeft, ChevronRight, ChevronsRight } from 'lucide-react'
 import { Colors } from '@/lib/design-tokens'
@@ -331,7 +332,23 @@ export default function ExecutionHistoryTable({ clientId }: ExecutionHistoryTabl
                           }}
                         >
                           <td style={{ padding: '14px', fontSize: '14px', lineHeight: 1.6, fontWeight: 500, color: Colors.dashboard.text.primary.rgb }}>
-                            {execution.execution_id || '-'}
+                            {execution.execution_id && execution.workflow_id ? (
+                              <a
+                                href={getExecutionUrl(execution.workflow_id, execution.execution_id)}
+                                target="_blank"
+                                rel="noopener noreferrer"
+                                style={{
+                                  color: Colors.dashboard.text.primary.rgb,
+                                  textDecoration: 'underline',
+                                  cursor: 'pointer'
+                                }}
+                                className="hover:opacity-70 transition-opacity"
+                              >
+                                {execution.execution_id}
+                              </a>
+                            ) : (
+                              execution.execution_id || '-'
+                            )}
                           </td>
                           <td style={{ padding: '14px', fontSize: '14px', lineHeight: 1.6, fontWeight: 500, width: '25%', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
                             <span className="truncate block" style={{ color: Colors.dashboard.text.primary.rgb }}>
