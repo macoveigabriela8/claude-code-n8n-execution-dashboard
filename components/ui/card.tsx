@@ -12,7 +12,7 @@ const Card = React.forwardRef<
       "border border-[rgb(238,238,238)] bg-white box-border",
       className
     )}
-    style={{ fontFamily: 'Roboto, sans-serif' }}
+    style={{ fontFamily: 'Roboto, -apple-system, BlinkMacSystemFont, "Segoe UI", "Helvetica Neue", Arial, sans-serif' }}
     {...props}
   />
 ))

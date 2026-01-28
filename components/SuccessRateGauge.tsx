@@ -284,7 +284,7 @@ export default function SuccessRateGauge({ clientId }: SuccessRateGaugeProps) {
           margin: 0, 
           padding: 0, 
           paddingRight: '144px',
-          fontFamily: 'Roboto',
+          fontFamily: 'Roboto, -apple-system, BlinkMacSystemFont, "Segoe UI", "Helvetica Neue", Arial, sans-serif',
           wordWrap: 'break-word',
           WebkitLineClamp: 2,
           WebkitBoxOrient: 'vertical' as any,
@@ -301,7 +301,7 @@ export default function SuccessRateGauge({ clientId }: SuccessRateGaugeProps) {
           right: '8px',
           fontSize: '0.7rem',
           color: Colors.main.default.gray2.rgb,
-          fontFamily: 'Roboto',
+          fontFamily: 'Roboto, -apple-system, BlinkMacSystemFont, "Segoe UI", "Helvetica Neue", Arial, sans-serif',
           margin: 0,
           padding: 0,
           lineHeight: 1.2,
@@ -386,7 +386,7 @@ export default function SuccessRateGauge({ clientId }: SuccessRateGaugeProps) {
                   style={{
                     fontSize: '11px',
                     fill: Colors.dashboard.text.primary.rgb,
-                    fontFamily: 'Roboto, sans-serif',
+                    fontFamily: 'Roboto, -apple-system, BlinkMacSystemFont, "Segoe UI", "Helvetica Neue", Arial, sans-serif',
                     fontWeight: 500,
                   }}
                 >
@@ -445,7 +445,7 @@ export default function SuccessRateGauge({ clientId }: SuccessRateGaugeProps) {
               fontSize: '19px', // Scaled: 24px * 0.8 = 19.2px -> 19px
               fontWeight: 700, 
               color: Colors.main.default.black.rgb, // Changed to black (was gray1)
-              fontFamily: 'Roboto, sans-serif',
+              fontFamily: 'Roboto, -apple-system, BlinkMacSystemFont, "Segoe UI", "Helvetica Neue", Arial, sans-serif',
               lineHeight: '1.2',
               marginBottom: '6px',
               overflow: 'visible',
@@ -456,7 +456,7 @@ export default function SuccessRateGauge({ clientId }: SuccessRateGaugeProps) {
             <p style={{ 
               fontSize: '11px', 
               color: Colors.main.default.gray2.rgb,
-              fontFamily: 'Roboto, sans-serif',
+              fontFamily: 'Roboto, -apple-system, BlinkMacSystemFont, "Segoe UI", "Helvetica Neue", Arial, sans-serif',
               margin: 0
             }}>
               Target : {targetRate}%
