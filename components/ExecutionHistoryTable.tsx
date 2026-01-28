@@ -64,30 +64,43 @@ export default function ExecutionHistoryTable({ clientId }: ExecutionHistoryTabl
         setLoading(true)
         setError(null) // Clear any previous errors at the start of fetch
         
-        // Get ALL data (no pagination on server) so we can filter client-side
-        const filters: { status?: string; limit?: number; days?: number; workflowName?: string } = { 
-          limit: 100000, // Get all data - increase limit to match all transactions
-          days: daysFilter // Add days filter (default: 1 for 24 hours)
-        }
-        if (statusFilter !== 'all') {
-          filters.status = statusFilter
-        }
-        if (workflowFilter !== 'all') {
-          filters.workflowName = workflowFilter
+        // Use pagination to fetch ALL data (same approach as ExecutionTrendChart)
+        const allExecutions: RecentExecution[] = []
+        let offset = 0
+        const pageSize = 1000
+        let hasMore = true
+        
+        while (hasMore) {
+          const filters: { status?: string; limit?: number; days?: number; offset?: number; workflowName?: string } = { 
+            days: daysFilter,
+            limit: pageSize,
+            offset: offset
+          }
+          if (statusFilter !== 'all') {
+            filters.status = statusFilter
+          }
+          if (workflowFilter !== 'all') {
+            filters.workflowName = workflowFilter
+          }
+          
+          const result = await getRecentExecutions(clientId, filters)
+          
+          if (result.data && result.data.length > 0) {
+            allExecutions.push(...result.data)
+            offset += pageSize
+            
+            // If we got fewer results than pageSize, we've reached the end
+            // Or if the total count matches what we've fetched
+            if (result.data.length < pageSize || (result.count !== null && allExecutions.length >= result.count)) {
+              hasMore = false
+            }
+          } else {
+            hasMore = false
+          }
         }
         
-        const result = await getRecentExecutions(clientId, filters)
-        if (!result || typeof result !== 'object' || !('data' in result)) {
-          console.error('Invalid response format:', result)
-          throw new Error('Invalid response format from getRecentExecutions')
-        }
-        // Ensure data is always an array
-        if (!Array.isArray(result.data)) {
-          console.error('Invalid data format - not an array:', result.data)
-          throw new Error('Invalid data format: expected array')
-        }
-        setData(result.data)
-        setTotalCount(result.count || 0)
+        setData(allExecutions)
+        setTotalCount(allExecutions.length)
         setError(null) // Clear error on success
       } catch (err) {
         console.error('Error loading executions:', err)
