@@ -367,8 +367,8 @@ export default function SuccessRateGauge({ clientId }: SuccessRateGaugeProps) {
               const workflow = workflowsWithExecutions[index]
               const segmentPercent = totalExecutions > 0 ? ((workflow.executions_24h / totalExecutions) * 100) : 0
               
-              // Don't show labels for very small segments (less than 0.5%)
-              if (segmentPercent < 0.5) {
+              // Don't show labels for small segments to prevent overlap (less than 3%)
+              if (segmentPercent < 3) {
                 return null
               }
               

@@ -369,14 +369,14 @@ export default function ExecutionHistoryTable({ clientId }: ExecutionHistoryTabl
                               const details = execution.details
                               if (!details) return '-'
                               const detailsStr = typeof details === 'string' ? details : JSON.stringify(details)
-                              const truncated = detailsStr.substring(0, 60)
-                              const isTruncated = detailsStr.length > 60
+                              const displayText = detailsStr.length > 60 ? `${detailsStr.substring(0, 60)}...` : detailsStr
                               
-                              if (isTruncated) {
+                              // Always show tooltip for non-empty text since column width causes visual truncation
+                              if (detailsStr.length > 0) {
                                 return (
                                   <Tooltip>
                                     <TooltipTrigger asChild>
-                                      <span style={{ cursor: 'help', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap', display: 'block' }}>{truncated}...</span>
+                                      <span style={{ cursor: 'help', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap', display: 'block' }}>{displayText}</span>
                                     </TooltipTrigger>
                                     <TooltipContent 
                                       side="left"
@@ -399,7 +399,7 @@ export default function ExecutionHistoryTable({ clientId }: ExecutionHistoryTabl
                                   </Tooltip>
                                 )
                               }
-                              return <span style={{ overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap', display: 'block' }}>{detailsStr}</span>
+                              return '-'
                             })()}
                           </td>
                         </tr>
