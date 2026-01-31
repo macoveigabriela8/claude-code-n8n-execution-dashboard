@@ -209,6 +209,7 @@ export default function SuccessRateGauge({ clientId }: SuccessRateGaugeProps) {
       existing.executions_24h = (existing.executions_24h || 0) + (workflow.executions_24h || 0)
       existing.success_24h = (existing.success_24h || 0) + (workflow.success_24h || 0)
       existing.errors_24h = (existing.errors_24h || 0) + (workflow.errors_24h || 0)
+      console.log('Duplicate found:', workflow.workflow_name, 'ID:', id)
     } else {
       workflowMap.set(id, { ...workflow })
     }
@@ -216,6 +217,8 @@ export default function SuccessRateGauge({ clientId }: SuccessRateGaugeProps) {
 
   const uniqueWorkflows = Array.from(workflowMap.values())
     .sort((a, b) => (b.executions_24h || 0) - (a.executions_24h || 0)) // Re-sort after deduplication
+  
+  console.log('Before dedup:', workflowsWithExecutions.length, 'After dedup:', uniqueWorkflows.length)
 
   // Calculate total executions for proportional calculation
   const totalExecutions = uniqueWorkflows.reduce((sum, w) => sum + w.executions_24h, 0)
