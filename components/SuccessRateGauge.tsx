@@ -199,8 +199,26 @@ export default function SuccessRateGauge({ clientId }: SuccessRateGaugeProps) {
     })
     .sort((a, b) => (b.executions_24h || 0) - (a.executions_24h || 0)) // Sort by execution count (descending)
 
+  // Deduplicate workflows by workflow_id and aggregate executions
+  const workflowMap = new Map()
+  workflowsWithExecutions.forEach(workflow => {
+    const id = workflow.workflow_id
+    if (workflowMap.has(id)) {
+      // Merge with existing entry - aggregate execution counts
+      const existing = workflowMap.get(id)
+      existing.executions_24h = (existing.executions_24h || 0) + (workflow.executions_24h || 0)
+      existing.success_24h = (existing.success_24h || 0) + (workflow.success_24h || 0)
+      existing.errors_24h = (existing.errors_24h || 0) + (workflow.errors_24h || 0)
+    } else {
+      workflowMap.set(id, { ...workflow })
+    }
+  })
+
+  const uniqueWorkflows = Array.from(workflowMap.values())
+    .sort((a, b) => (b.executions_24h || 0) - (a.executions_24h || 0)) // Re-sort after deduplication
+
   // Calculate total executions for proportional calculation
-  const totalExecutions = workflowsWithExecutions.reduce((sum, w) => sum + w.executions_24h, 0)
+  const totalExecutions = uniqueWorkflows.reduce((sum, w) => sum + w.executions_24h, 0)
 
   // Calculate proportional segment boundaries based on execution counts
   let segmentBoundaries: number[] = [0]
@@ -218,7 +236,7 @@ export default function SuccessRateGauge({ clientId }: SuccessRateGaugeProps) {
     segmentBoundaries = [0, 100]
   }
 
-  const segmentCount = workflowsWithExecutions.length
+  const segmentCount = uniqueWorkflows.length
 
   // Segment colors - dynamic gradient from dark to light blue/purple
   const colorPalette = [
@@ -316,7 +334,7 @@ export default function SuccessRateGauge({ clientId }: SuccessRateGaugeProps) {
             {/* Background segments - proportional based on execution counts */}
             {totalExecutions > 0 && segmentBoundaries.slice(0, -1).map((startPercent, index) => {
               const endPercent = segmentBoundaries[index + 1]
-              const workflow = workflowsWithExecutions[index]
+              const workflow = uniqueWorkflows[index]
               const workflowName = workflow?.workflow_name || 'Unknown'
               const segmentPercent = totalExecutions > 0 ? ((workflow.executions_24h / totalExecutions) * 100) : 0
               return (
@@ -364,7 +382,7 @@ export default function SuccessRateGauge({ clientId }: SuccessRateGaugeProps) {
               const midPercent = (startPercent + endPercent) / 2
               const midAngle = percentageToAngle(midPercent)
               const midAngleRad = degToRad(midAngle)
-              const workflow = workflowsWithExecutions[index]
+              const workflow = uniqueWorkflows[index]
               const segmentPercent = totalExecutions > 0 ? ((workflow.executions_24h / totalExecutions) * 100) : 0
               
               // Don't show labels for small segments to prevent overlap (less than 3%)
