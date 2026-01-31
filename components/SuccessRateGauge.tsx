@@ -200,25 +200,30 @@ export default function SuccessRateGauge({ clientId }: SuccessRateGaugeProps) {
     .sort((a, b) => (b.executions_24h || 0) - (a.executions_24h || 0)) // Sort by execution count (descending)
 
   // Deduplicate workflows by workflow_id and aggregate executions
-  const workflowMap = new Map()
-  workflowsWithExecutions.forEach(workflow => {
-    const id = workflow.workflow_id
-    if (workflowMap.has(id)) {
-      // Merge with existing entry - aggregate execution counts
-      const existing = workflowMap.get(id)
-      existing.executions_24h = (existing.executions_24h || 0) + (workflow.executions_24h || 0)
-      existing.success_24h = (existing.success_24h || 0) + (workflow.success_24h || 0)
-      existing.errors_24h = (existing.errors_24h || 0) + (workflow.errors_24h || 0)
-      console.log('Duplicate found:', workflow.workflow_name, 'ID:', id)
+  // Use reduce to create a clean deduplicated array
+  const uniqueWorkflows = workflowsWithExecutions.reduce((acc, workflow) => {
+    const existingIndex = acc.findIndex(w => w.workflow_id === workflow.workflow_id)
+    
+    if (existingIndex >= 0) {
+      // Duplicate found - merge execution counts into existing entry
+      console.log('Duplicate found:', workflow.workflow_name, 'ID:', workflow.workflow_id)
+      acc[existingIndex] = {
+        ...acc[existingIndex],
+        executions_24h: (acc[existingIndex].executions_24h || 0) + (workflow.executions_24h || 0),
+        success_24h: (acc[existingIndex].success_24h || 0) + (workflow.success_24h || 0),
+        errors_24h: (acc[existingIndex].errors_24h || 0) + (workflow.errors_24h || 0)
+      }
     } else {
-      workflowMap.set(id, { ...workflow })
+      // New workflow - add to array
+      acc.push({ ...workflow })
     }
-  })
-
-  const uniqueWorkflows = Array.from(workflowMap.values())
-    .sort((a, b) => (b.executions_24h || 0) - (a.executions_24h || 0)) // Re-sort after deduplication
+    
+    return acc
+  }, [] as typeof workflowsWithExecutions)
+    .sort((a, b) => (b.executions_24h || 0) - (a.executions_24h || 0)) // Sort by execution count
   
-  console.log('Before dedup:', workflowsWithExecutions.length, 'After dedup:', uniqueWorkflows.length)
+  console.log('Workflows before dedup:', workflowsWithExecutions.length, 'After dedup:', uniqueWorkflows.length)
+  console.log('Unique workflow IDs:', uniqueWorkflows.map(w => w.workflow_id))
 
   // Calculate total executions for proportional calculation
   const totalExecutions = uniqueWorkflows.reduce((sum, w) => sum + w.executions_24h, 0)
