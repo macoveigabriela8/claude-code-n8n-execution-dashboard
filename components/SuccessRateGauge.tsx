@@ -222,8 +222,23 @@ export default function SuccessRateGauge({ clientId }: SuccessRateGaugeProps) {
   }, [] as typeof workflowsWithExecutions)
     .sort((a, b) => (b.executions_24h || 0) - (a.executions_24h || 0)) // Sort by execution count
   
-  console.log('Workflows before dedup:', workflowsWithExecutions.length, 'After dedup:', uniqueWorkflows.length)
-  console.log('Unique workflow IDs:', uniqueWorkflows.map(w => w.workflow_id))
+  // DEBUG OUTPUT - Remove after fixing
+  const debugInfo = {
+    beforeDedup: workflowsWithExecutions.length,
+    afterDedup: uniqueWorkflows.length,
+    boundariesCount: segmentBoundaries.length - 1, // -1 because first is always 0
+    workflows: uniqueWorkflows.map(w => `${w.workflow_name}: ${w.executions_24h}`),
+    boundaries: segmentBoundaries
+  }
+  console.log('=== SUCCESS RATE GAUGE DEBUG ===', debugInfo)
+  
+  // Alert if mismatch
+  if (uniqueWorkflows.length !== (segmentBoundaries.length - 1)) {
+    console.error('BUG: Workflow count doesnt match boundary count!', {
+      workflows: uniqueWorkflows.length,
+      boundaries: segmentBoundaries.length - 1
+    })
+  }
 
   // Calculate total executions for proportional calculation
   const totalExecutions = uniqueWorkflows.reduce((sum, w) => sum + w.executions_24h, 0)
