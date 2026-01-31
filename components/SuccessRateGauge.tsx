@@ -224,7 +224,7 @@ export default function SuccessRateGauge({ clientId }: SuccessRateGaugeProps) {
   let segmentBoundaries: number[] = [0]
   if (totalExecutions > 0) {
     let cumulativePercent = 0
-    workflowsWithExecutions.forEach(workflow => {
+    uniqueWorkflows.forEach(workflow => {
       const percent = (workflow.executions_24h / totalExecutions) * 100
       cumulativePercent += percent
       segmentBoundaries.push(cumulativePercent)
