@@ -71,9 +71,9 @@ function DashboardContent() {
 
             {/* Success Rate Gauge and Execution Trend - Side by Side */}
             <section style={{ display: 'grid', gridTemplateColumns: 'minmax(0, 1fr) minmax(0, 1fr)', gap: '8px', marginTop: '8px', alignItems: 'stretch' }}>
-              <Suspense fallback={<div style={{ minWidth: 0 }}>Loading success rate...</div>}>
+              <Suspense fallback={<div style={{ minWidth: 0 }}>Loading success rate...</div>} key={`success-rate-${clientId}`}>
                 <div style={{ minWidth: 0 }}>
-                  <SuccessRateGauge clientId={clientId} />
+                  <SuccessRateGauge clientId={clientId} key={clientId} />
                 </div>
               </Suspense>
               <Suspense fallback={<div style={{ minWidth: 0 }}>Loading execution trend...</div>}>
