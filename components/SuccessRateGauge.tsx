@@ -58,6 +58,96 @@ export default function SuccessRateGauge({ clientId }: SuccessRateGaugeProps) {
     fetchData()
   }, [clientId])
 
+  // Memoize workflow processing - MUST be called before any conditional returns (Rules of Hooks)
+  const { uniqueWorkflows, segmentBoundaries, totalExecutions, segmentCount } = useMemo(() => {
+    // Early return empty values if data not loaded yet
+    if (!workflowStats || workflowStats.length === 0) {
+      return { uniqueWorkflows: [], segmentBoundaries: [0, 100], totalExecutions: 0, segmentCount: 0 }
+    }
+
+    // Filter workflows with executions in the last 24 hours and match with ROI data
+    // Exclude workflows with 0% success rate (all failures)
+    const workflowsWithExecutions = workflowStats
+      .filter(stat => {
+        const executions = stat.executions_24h || 0
+        if (executions === 0) return false
+        
+        // Calculate success rate for this workflow
+        const success = stat.success_24h || 0
+        const workflowSuccessRate = executions > 0 ? (success / executions) * 100 : 0
+        
+        // Exclude workflows with 0% success rate (all failures)
+        return workflowSuccessRate > 0
+      })
+      .map(stat => {
+        // Match with ROI data to get workflow name and other properties
+        const roiData = workflowROIData.find(roi => roi.workflow_id === stat.workflow_id)
+        return {
+          ...stat,
+          workflow_name: roiData?.workflow_name || stat.workflow_name || stat.workflow_id || 'Unknown',
+          executions_24h: stat.executions_24h || 0
+        }
+      })
+      .sort((a, b) => (b.executions_24h || 0) - (a.executions_24h || 0)) // Sort by execution count (descending)
+
+    // Deduplicate workflows by workflow_id and aggregate executions
+    const deduplicatedWorkflows = workflowsWithExecutions.reduce((acc, workflow) => {
+      const existingIndex = acc.findIndex(w => w.workflow_id === workflow.workflow_id)
+      
+      if (existingIndex >= 0) {
+        // Duplicate found - merge execution counts into existing entry
+        console.log('Duplicate found:', workflow.workflow_name, 'ID:', workflow.workflow_id)
+        acc[existingIndex] = {
+          ...acc[existingIndex],
+          executions_24h: (acc[existingIndex].executions_24h || 0) + (workflow.executions_24h || 0),
+          success_24h: (acc[existingIndex].success_24h || 0) + (workflow.success_24h || 0),
+          errors_24h: (acc[existingIndex].errors_24h || 0) + (workflow.errors_24h || 0)
+        }
+      } else {
+        // New workflow - add to array
+        acc.push({ ...workflow })
+      }
+      
+      return acc
+    }, [] as typeof workflowsWithExecutions)
+      .sort((a, b) => (b.executions_24h || 0) - (a.executions_24h || 0)) // Sort by execution count
+
+    // Calculate total executions for proportional calculation
+    const total = deduplicatedWorkflows.reduce((sum, w) => sum + w.executions_24h, 0)
+
+    // Calculate proportional segment boundaries based on execution counts
+    let boundaries: number[] = [0]
+    if (total > 0) {
+      let cumulativePercent = 0
+      deduplicatedWorkflows.forEach(workflow => {
+        const percent = (workflow.executions_24h / total) * 100
+        cumulativePercent += percent
+        boundaries.push(cumulativePercent)
+      })
+      // Ensure the last boundary is exactly 100% to avoid rounding issues
+      boundaries[boundaries.length - 1] = 100
+    } else {
+      boundaries = [0, 100]
+    }
+
+    // DEBUG OUTPUT - Remove after fixing
+    console.log('=== SUCCESS RATE GAUGE DEBUG ===', {
+      renderID: renderIdRef.current,
+      beforeDedup: workflowsWithExecutions.length,
+      afterDedup: deduplicatedWorkflows.length,
+      boundariesCount: boundaries.length - 1,
+      workflows: deduplicatedWorkflows.map(w => `${w.workflow_name}: ${w.executions_24h}`),
+      workflowIDs: deduplicatedWorkflows.map(w => w.workflow_id)
+    })
+
+    return { 
+      uniqueWorkflows: deduplicatedWorkflows, 
+      segmentBoundaries: boundaries, 
+      totalExecutions: total, 
+      segmentCount: deduplicatedWorkflows.length 
+    }
+  }, [workflowStats, workflowROIData])
+
   if (loading) {
     return (
       <Card>
@@ -174,90 +264,6 @@ export default function SuccessRateGauge({ clientId }: SuccessRateGaugeProps) {
     // Create path: Move to start, outer arc (sweep=1 for counterclockwise to curve upward), line to inner, inner arc (sweep=0), close
     return `M ${x1} ${y1} A ${radius} ${radius} 0 ${largeArc} 1 ${x2} ${y2} L ${x3} ${y3} A ${innerRadius} ${innerRadius} 0 ${largeArc} 0 ${x4} ${y4} Z`
   }
-
-  // Memoize workflow processing to prevent recalculation on every render
-  const { uniqueWorkflows, segmentBoundaries, totalExecutions, segmentCount } = useMemo(() => {
-    // Filter workflows with executions in the last 24 hours and match with ROI data
-    // Exclude workflows with 0% success rate (all failures)
-    const workflowsWithExecutions = workflowStats
-    .filter(stat => {
-      const executions = stat.executions_24h || 0
-      if (executions === 0) return false
-      
-      // Calculate success rate for this workflow
-      const success = stat.success_24h || 0
-      const workflowSuccessRate = executions > 0 ? (success / executions) * 100 : 0
-      
-      // Exclude workflows with 0% success rate (all failures)
-      return workflowSuccessRate > 0
-    })
-    .map(stat => {
-      // Match with ROI data to get workflow name and other properties
-      const roiData = workflowROIData.find(roi => roi.workflow_id === stat.workflow_id)
-      return {
-        ...stat,
-        workflow_name: roiData?.workflow_name || stat.workflow_name || stat.workflow_id || 'Unknown',
-        executions_24h: stat.executions_24h || 0
-      }
-    })
-    .sort((a, b) => (b.executions_24h || 0) - (a.executions_24h || 0)) // Sort by execution count (descending)
-
-  // Deduplicate workflows by workflow_id and aggregate executions
-  // Use reduce to create a clean deduplicated array
-  const uniqueWorkflows = workflowsWithExecutions.reduce((acc, workflow) => {
-    const existingIndex = acc.findIndex(w => w.workflow_id === workflow.workflow_id)
-    
-    if (existingIndex >= 0) {
-      // Duplicate found - merge execution counts into existing entry
-      console.log('Duplicate found:', workflow.workflow_name, 'ID:', workflow.workflow_id)
-      acc[existingIndex] = {
-        ...acc[existingIndex],
-        executions_24h: (acc[existingIndex].executions_24h || 0) + (workflow.executions_24h || 0),
-        success_24h: (acc[existingIndex].success_24h || 0) + (workflow.success_24h || 0),
-        errors_24h: (acc[existingIndex].errors_24h || 0) + (workflow.errors_24h || 0)
-      }
-    } else {
-      // New workflow - add to array
-      acc.push({ ...workflow })
-    }
-    
-    return acc
-  }, [] as typeof workflowsWithExecutions)
-    .sort((a, b) => (b.executions_24h || 0) - (a.executions_24h || 0)) // Sort by execution count
-
-  // Calculate total executions for proportional calculation
-  const totalExecutions = uniqueWorkflows.reduce((sum, w) => sum + w.executions_24h, 0)
-
-  // Calculate proportional segment boundaries based on execution counts
-  let segmentBoundaries: number[] = [0]
-  if (totalExecutions > 0) {
-    let cumulativePercent = 0
-    uniqueWorkflows.forEach(workflow => {
-      const percent = (workflow.executions_24h / totalExecutions) * 100
-      cumulativePercent += percent
-      segmentBoundaries.push(cumulativePercent)
-    })
-    // Ensure the last boundary is exactly 100% to avoid rounding issues
-    segmentBoundaries[segmentBoundaries.length - 1] = 100
-  } else {
-    // If no executions, show empty state (handled below)
-    segmentBoundaries = [0, 100]
-  }
-
-  const segmentCount = uniqueWorkflows.length
-
-    // DEBUG OUTPUT - Remove after fixing
-    console.log('=== SUCCESS RATE GAUGE DEBUG ===', {
-      renderID: renderIdRef.current,
-      beforeDedup: workflowsWithExecutions.length,
-      afterDedup: uniqueWorkflows.length,
-      boundariesCount: segmentBoundaries.length - 1,
-      workflows: uniqueWorkflows.map(w => `${w.workflow_name}: ${w.executions_24h}`),
-      workflowIDs: uniqueWorkflows.map(w => w.workflow_id)
-    })
-
-    return { uniqueWorkflows, segmentBoundaries, totalExecutions, segmentCount }
-  }, [workflowStats, workflowROIData])
 
   // Segment colors - dynamic gradient from dark to light blue/purple
   const colorPalette = [
