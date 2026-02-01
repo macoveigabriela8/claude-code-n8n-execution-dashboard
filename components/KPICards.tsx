@@ -171,13 +171,11 @@ export default function KPICards({ clientId }: KPICardsProps) {
     display: 'flex',
     flexDirection: 'column' as const,
     overflow: 'hidden' as const,
-    fontFamily: 'Roboto, -apple-system, BlinkMacSystemFont, "Segoe UI", "Helvetica Neue", Arial, sans-serif',
   }
 
   const titleStyle = {
     color: '#0D076A',
     fontSize: '14px',
-    fontFamily: 'Roboto, -apple-system, BlinkMacSystemFont, "Segoe UI", "Helvetica Neue", Arial, sans-serif',
     fontWeight: 700,
     margin: '0px 8px 10px',
     padding: '0px 2px',
@@ -187,7 +185,6 @@ export default function KPICards({ clientId }: KPICardsProps) {
   const valueStyle = {
     color: '#212529',
     fontSize: '32px',
-    fontFamily: 'Roboto, -apple-system, BlinkMacSystemFont, "Segoe UI", "Helvetica Neue", Arial, sans-serif',
     fontWeight: 900,
     margin: '0px 0px 10px',
     padding: 0,
@@ -198,7 +195,6 @@ export default function KPICards({ clientId }: KPICardsProps) {
   const subtitleStyle = {
     color: '#9CA0A9',
     fontSize: '12px',
-    fontFamily: 'Roboto, -apple-system, BlinkMacSystemFont, "Segoe UI", "Helvetica Neue", Arial, sans-serif',
     fontWeight: 500,
     margin: '0px 0px 0px',
     padding: '0px 2px',

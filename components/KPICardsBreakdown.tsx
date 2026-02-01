@@ -418,7 +418,6 @@ export default function KPICardsBreakdown({
                 fontWeight: 600,
                 margin: 0,
                 padding: 0,
-                fontFamily: 'Roboto, -apple-system, BlinkMacSystemFont, "Segoe UI", "Helvetica Neue", Arial, sans-serif',
               }}>
                 View Details
               </h3>

@@ -233,7 +233,6 @@ export default function ExecutionHistoryTable({ clientId }: ExecutionHistoryTabl
                 fontWeight: 500, 
                 margin: 0, 
                 padding: 0, 
-                fontFamily: 'Roboto, -apple-system, BlinkMacSystemFont, "Segoe UI", "Helvetica Neue", Arial, sans-serif',
                 wordWrap: 'break-word',
                 WebkitLineClamp: 2,
                 WebkitBoxOrient: 'vertical' as any,

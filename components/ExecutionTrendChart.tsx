@@ -207,7 +207,6 @@ export default function ExecutionTrendChart({ clientId }: ExecutionTrendChartPro
               fontWeight: 500, 
               margin: 0, 
               padding: 0, 
-              fontFamily: 'Roboto, -apple-system, BlinkMacSystemFont, "Segoe UI", "Helvetica Neue", Arial, sans-serif',
               wordWrap: 'break-word',
               WebkitLineClamp: 2,
               WebkitBoxOrient: 'vertical' as any,
@@ -258,7 +257,6 @@ export default function ExecutionTrendChart({ clientId }: ExecutionTrendChartPro
             right: '8px',
             fontSize: '0.7rem',
             color: Colors.main.default.gray2.rgb,
-            fontFamily: 'Roboto',
             margin: 0,
             padding: 0,
             lineHeight: 1.2,
@@ -351,7 +349,6 @@ export default function ExecutionTrendChart({ clientId }: ExecutionTrendChartPro
                         color: '#FFFFFF',
                         fontSize: '11px',
                         fontWeight: 400,
-                        fontFamily: 'Roboto, -apple-system, BlinkMacSystemFont, "Segoe UI", "Helvetica Neue", Arial, sans-serif',
                         boxShadow: '0 2px 8px rgba(0, 0, 0, 0.3)',
                         lineHeight: '1.5'
                       }}>
