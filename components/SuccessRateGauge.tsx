@@ -410,26 +410,16 @@ export default function SuccessRateGauge({ clientId }: SuccessRateGaugeProps) {
               )
             })}
 
-            {/* Target marker - dashed line with shadow to distinguish from segment boundaries */}
-            <line
-              x1={targetLineStartX}
-              y1={targetLineStartY}
-              x2={targetLineEndX}
-              y2={targetLineEndY}
-              stroke="#000000"
-              strokeWidth="6"
-              strokeLinecap="round"
-              opacity="0.3"
-            />
+            {/* Target marker - thin dashed line */}
             <line
               x1={targetLineStartX}
               y1={targetLineStartY}
               x2={targetLineEndX}
               y2={targetLineEndY}
               stroke="#FFFFFF"
-              strokeWidth="3"
+              strokeWidth="2"
               strokeLinecap="round"
-              strokeDasharray="6,4"
+              strokeDasharray="4,3"
             />
 
             {/* Segment percentage labels - positioned outside the arc at consistent distance */}
