@@ -59,6 +59,8 @@ export default function ExecutionTrendChart({ clientId }: ExecutionTrendChartPro
           }
         }
         
+        console.log('=== EXECUTION TREND CHART DEBUG ===')
+        console.log('Total raw executions fetched:', allExecutions.length)
         setData(allExecutions)
       } catch (err) {
         console.error('Error loading executions:', err)
@@ -95,15 +97,30 @@ export default function ExecutionTrendChart({ clientId }: ExecutionTrendChartPro
       hoursMap.set(hourKey, { successful: 0, failed: 0 })
     }
 
+    // DEBUG: Track aggregation stats
+    let aggregationStats = {
+      total: data.length,
+      noStartedAt: 0,
+      outsideWindow: 0,
+      noMatchingBucket: 0,
+      assigned: 0
+    }
+
     // Aggregate executions into 2-hour buckets (convert UTC timestamps to local time)
     data.forEach((execution) => {
-      if (!execution.started_at) return
+      if (!execution.started_at) {
+        aggregationStats.noStartedAt++
+        return
+      }
 
       const executionDate = new Date(execution.started_at)
       // Only process executions within the last 24 hours (from roundedNow to now)
       // We use roundedNow for the start boundary to match our bucket boundaries,
       // but use now for the end boundary to include all executions up to the current time
-      if (executionDate < last24Hours || executionDate > now) return
+      if (executionDate < last24Hours || executionDate > now) {
+        aggregationStats.outsideWindow++
+        return
+      }
 
       // Round down to the nearest 2-hour boundary
       const executionHour = executionDate.getHours()
@@ -116,13 +133,26 @@ export default function ExecutionTrendChart({ clientId }: ExecutionTrendChartPro
       const hourData = hoursMap.get(hourKey)
 
       if (hourData) {
+        aggregationStats.assigned++
         if (execution.status === 'success') {
           hourData.successful += 1
         } else {
           hourData.failed += 1
         }
+      } else {
+        aggregationStats.noMatchingBucket++
+        console.log('No bucket for:', hourKey, 'execution:', execution.execution_id, 'at', execution.started_at)
       }
     })
+
+    // DEBUG: Log aggregation results
+    console.log('=== CHART AGGREGATION DEBUG ===')
+    console.log('Current time:', now.toISOString())
+    console.log('Rounded now:', roundedNow.toISOString())
+    console.log('Last 24 hours cutoff:', last24Hours.toISOString())
+    console.log('Aggregation stats:', aggregationStats)
+    console.log('Buckets created:', Array.from(hoursMap.keys()))
+    console.log('Bucket counts:', Array.from(hoursMap.entries()).map(([k, v]) => `${k}: ${v.successful + v.failed}`))
 
     // Convert to array and format for display
     return Array.from(hoursMap.entries())
