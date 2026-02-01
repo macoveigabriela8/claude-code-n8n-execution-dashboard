@@ -90,13 +90,19 @@ export default function SuccessRateGauge({ clientId }: SuccessRateGaugeProps) {
       })
       .sort((a, b) => (b.executions_24h || 0) - (a.executions_24h || 0)) // Sort by execution count (descending)
 
-    // Deduplicate workflows by workflow_id and aggregate executions
+    // Deduplicate workflows by workflow_id AND workflow_name (some workflows may have different IDs but same name)
     const deduplicatedWorkflows = workflowsWithExecutions.reduce((acc, workflow) => {
-      const existingIndex = acc.findIndex(w => w.workflow_id === workflow.workflow_id)
+      // First check by workflow_id
+      let existingIndex = acc.findIndex(w => w.workflow_id === workflow.workflow_id)
+      
+      // If not found by ID, also check by name (catches workflows with same name but different IDs)
+      if (existingIndex < 0) {
+        existingIndex = acc.findIndex(w => w.workflow_name === workflow.workflow_name)
+      }
       
       if (existingIndex >= 0) {
         // Duplicate found - merge execution counts into existing entry
-        console.log('Duplicate found:', workflow.workflow_name, 'ID:', workflow.workflow_id)
+        console.log('Duplicate found by ID or Name:', workflow.workflow_name, 'ID:', workflow.workflow_id)
         acc[existingIndex] = {
           ...acc[existingIndex],
           executions_24h: (acc[existingIndex].executions_24h || 0) + (workflow.executions_24h || 0),
@@ -131,14 +137,26 @@ export default function SuccessRateGauge({ clientId }: SuccessRateGaugeProps) {
     }
 
     // DEBUG OUTPUT - Remove after fixing
-    console.log('=== SUCCESS RATE GAUGE DEBUG ===', {
-      renderID: renderIdRef.current,
-      beforeDedup: workflowsWithExecutions.length,
-      afterDedup: deduplicatedWorkflows.length,
-      boundariesCount: boundaries.length - 1,
-      workflows: deduplicatedWorkflows.map(w => `${w.workflow_name}: ${w.executions_24h}`),
-      workflowIDs: deduplicatedWorkflows.map(w => w.workflow_id)
+    console.log('=== SUCCESS RATE GAUGE DEBUG ===')
+    console.log('Render ID:', renderIdRef.current)
+    console.log('Input workflowStats count:', workflowStats.length)
+    console.log('After filter count:', workflowsWithExecutions.length)
+    console.log('After dedup count:', deduplicatedWorkflows.length)
+    console.log('Segment boundaries:', boundaries)
+    console.log('Workflows with IDs:')
+    deduplicatedWorkflows.forEach((w, i) => {
+      console.log(`  ${i}: ${w.workflow_name} | ID: ${w.workflow_id} | Execs: ${w.executions_24h}`)
     })
+    
+    // Check for duplicate workflow names (even if IDs differ)
+    const nameCount: Record<string, number> = {}
+    deduplicatedWorkflows.forEach(w => {
+      nameCount[w.workflow_name] = (nameCount[w.workflow_name] || 0) + 1
+    })
+    const duplicateNames = Object.entries(nameCount).filter(([_, count]) => count > 1)
+    if (duplicateNames.length > 0) {
+      console.warn('⚠️ DUPLICATE WORKFLOW NAMES FOUND:', duplicateNames)
+    }
 
     return { 
       uniqueWorkflows: deduplicatedWorkflows, 
