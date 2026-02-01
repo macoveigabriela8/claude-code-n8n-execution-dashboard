@@ -175,9 +175,11 @@ export default function SuccessRateGauge({ clientId }: SuccessRateGaugeProps) {
     return `M ${x1} ${y1} A ${radius} ${radius} 0 ${largeArc} 1 ${x2} ${y2} L ${x3} ${y3} A ${innerRadius} ${innerRadius} 0 ${largeArc} 0 ${x4} ${y4} Z`
   }
 
-  // Filter workflows with executions in the last 24 hours and match with ROI data
-  // Exclude workflows with 0% success rate (all failures)
-  const workflowsWithExecutions = workflowStats
+  // Memoize workflow processing to prevent recalculation on every render
+  const { uniqueWorkflows, segmentBoundaries, totalExecutions, segmentCount } = useMemo(() => {
+    // Filter workflows with executions in the last 24 hours and match with ROI data
+    // Exclude workflows with 0% success rate (all failures)
+    const workflowsWithExecutions = workflowStats
     .filter(stat => {
       const executions = stat.executions_24h || 0
       if (executions === 0) return false
@@ -244,15 +246,18 @@ export default function SuccessRateGauge({ clientId }: SuccessRateGaugeProps) {
 
   const segmentCount = uniqueWorkflows.length
 
-  // DEBUG OUTPUT - Remove after fixing
-  console.log('=== SUCCESS RATE GAUGE DEBUG ===', {
-    renderID: renderIdRef.current,
-    beforeDedup: workflowsWithExecutions.length,
-    afterDedup: uniqueWorkflows.length,
-    boundariesCount: segmentBoundaries.length - 1,
-    workflows: uniqueWorkflows.map(w => `${w.workflow_name}: ${w.executions_24h}`),
-    workflowIDs: uniqueWorkflows.map(w => w.workflow_id)
-  })
+    // DEBUG OUTPUT - Remove after fixing
+    console.log('=== SUCCESS RATE GAUGE DEBUG ===', {
+      renderID: renderIdRef.current,
+      beforeDedup: workflowsWithExecutions.length,
+      afterDedup: uniqueWorkflows.length,
+      boundariesCount: segmentBoundaries.length - 1,
+      workflows: uniqueWorkflows.map(w => `${w.workflow_name}: ${w.executions_24h}`),
+      workflowIDs: uniqueWorkflows.map(w => w.workflow_id)
+    })
+
+    return { uniqueWorkflows, segmentBoundaries, totalExecutions, segmentCount }
+  }, [workflowStats, workflowROIData])
 
   // Segment colors - dynamic gradient from dark to light blue/purple
   const colorPalette = [
