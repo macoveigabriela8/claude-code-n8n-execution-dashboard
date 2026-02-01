@@ -246,7 +246,7 @@ export async function getClientWorkflows(clientId: string) {
 export async function getClientData(clientId: string) {
   const { data, error } = await supabase
     .from('n8n_clients')
-    .select('id, currency_code')
+    .select('*')  // Select all columns, handle missing fields gracefully
     .eq('id', clientId)
     .maybeSingle()
 
