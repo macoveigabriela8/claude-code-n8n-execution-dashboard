@@ -370,7 +370,7 @@ export default function SuccessRateGauge({ clientId }: SuccessRateGaugeProps) {
           lineHeight: 1.2,
           whiteSpace: 'nowrap'
         }}>
-          Last 24 H
+          Last 24 H | {segmentCount} workflows
         </span>
       </CardHeader>
       <CardContent style={{ padding: '16px', flex: 1, display: 'flex', flexDirection: 'column' }}>
