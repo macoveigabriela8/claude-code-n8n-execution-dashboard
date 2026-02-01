@@ -1,6 +1,6 @@
 'use client'
 
-import { useEffect, useState } from 'react'
+import { useEffect, useState, useRef } from 'react'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { Skeleton } from '@/components/ui/skeleton'
 import { getClientSummary, getWorkflowROI, getWorkflowStats, supabase } from '@/lib/supabase'
@@ -22,6 +22,7 @@ export default function SuccessRateGauge({ clientId }: SuccessRateGaugeProps) {
   const [hoveredSegment, setHoveredSegment] = useState<{ name: string; color: string; mouseX: number; mouseY: number; percent: number } | null>(null)
   const [containerRef, setContainerRef] = useState<HTMLDivElement | null>(null)
   const [lastCollectedAt, setLastCollectedAt] = useState<string | null>(null)
+  const renderIdRef = useRef(Math.random())
 
   useEffect(() => {
     async function fetchData() {
@@ -245,6 +246,7 @@ export default function SuccessRateGauge({ clientId }: SuccessRateGaugeProps) {
 
   // DEBUG OUTPUT - Remove after fixing
   console.log('=== SUCCESS RATE GAUGE DEBUG ===', {
+    renderID: renderIdRef.current,
     beforeDedup: workflowsWithExecutions.length,
     afterDedup: uniqueWorkflows.length,
     boundariesCount: segmentBoundaries.length - 1,
