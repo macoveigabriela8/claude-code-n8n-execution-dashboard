@@ -107,22 +107,6 @@ export default function ExecutionHistoryTable({ clientId }: ExecutionHistoryTabl
           }
         }
         
-        // DEBUG: Log fetch results for comparison with chart
-        console.log('=== EXECUTION HISTORY TABLE DEBUG ===')
-        console.log('Total raw executions fetched:', allExecutions.length)
-        console.log('Filters applied:', { statusFilter, workflowFilter, daysFilter })
-        
-        // Count executions by hour for comparison with chart
-        const hourCounts: Record<string, number> = {}
-        allExecutions.forEach(exec => {
-          if (exec.started_at) {
-            const date = new Date(exec.started_at)
-            const hourKey = `${date.getFullYear()}-${String(date.getMonth() + 1).padStart(2, '0')}-${String(date.getDate()).padStart(2, '0')} ${String(Math.floor(date.getHours() / 2) * 2).padStart(2, '0')}:00`
-            hourCounts[hourKey] = (hourCounts[hourKey] || 0) + 1
-          }
-        })
-        console.log('Executions by 2-hour bucket (for chart comparison):', hourCounts)
-        
         setData(allExecutions)
         setTotalCount(allExecutions.length)
         setError(null) // Clear error on success
