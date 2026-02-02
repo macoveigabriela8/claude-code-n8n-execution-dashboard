@@ -60,6 +60,7 @@ export default function KPICards({ clientId }: KPICardsProps) {
       if (client.status === 'rejected') console.error('Failed to fetch client data:', client.reason)
       if (allWorkflows.status === 'rejected') console.error('Failed to fetch workflows:', allWorkflows.reason)
       if (configs.status === 'rejected') console.error('Failed to fetch ROI configs:', configs.reason)
+      if (tools.status === 'rejected') console.error('Failed to fetch tools:', tools.reason)
     } catch (err) {
       console.error('Error loading ROI summary:', err)
       let errorMessage = 'Unknown error'

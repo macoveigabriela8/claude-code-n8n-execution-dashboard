@@ -355,6 +355,11 @@ export default function KPICardsBreakdown({
     )
   ).sort((a, b) => (a.tool || '').localeCompare(b.tool || ''))
 
+  // Debug logging for tool costs
+  console.log('Tool costs received:', toolCosts)
+  console.log('Common cost tools (recurring + keywords):', commonCostTools)
+  console.log('Other tools (recurring, no keywords):', otherTools)
+
   const laborCostWorkflows = workflowData.filter(w => w.labor_cost_saved && w.labor_cost_saved > 0)
     .sort((a, b) => {
       const nameA = (a.workflow_name || a.workflow_id || '').toLowerCase()
